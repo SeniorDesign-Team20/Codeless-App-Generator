@@ -8,15 +8,14 @@ export default function Top() {
         <Text style = {styles.welcomenote}>Codeless App Generator!</Text>            
      </View>
    )
-} 
+}
 
 const styles = StyleSheet.create({
     toppart:{
         height:80,
         width:500,
         paddingTop:29,
-        backgroundColor:'#1e90ff',
-        
+        backgroundColor:'#1e90ff',  
     },
     welcomenote:{
         textAlign: 'center',
