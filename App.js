@@ -1,40 +1,21 @@
-import { StyleSheet, View } from "react-native";
-import { useState } from "react";
-import CheckBox from "./CheckBox";
-  
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+
 export default function App() {
-    const [music, setMusic] = useState(false);
-      const [dancing, setDancing] = useState(false);
-      const [reading, setReading] = useState(false);
-  
-    return (
-        <View style={styles.container}>
-            <CheckBox
-                onPress={() => setMusic(!music)}
-                title="Music"
-                isChecked={music}
-              />
-              <CheckBox
-                onPress={() => setDancing(!dancing)}
-                title="Dancing"
-                isChecked={dancing}
-              />
-              <CheckBox
-                onPress={() => setReading(!reading)}
-                title="Reading"
-                isChecked={reading}
-              />
-             
-        </View>
-        
-      );
-    }
-  
+  return (
+    <View style={styles.container}>
+      <Text>Open up App.js to start working on your app!</Text>
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        justifyContent: "center",
-        alignItems: "center",
-      },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
+//hi drew. test
