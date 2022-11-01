@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { useState } from "react";
 import CheckBox from "./CheckBox";
-//import Headers from "./TextAndHeaders";
+import Top from './title'
 
 export default function App() {
     const [feature1, set1] = useState(false);
@@ -9,9 +9,10 @@ export default function App() {
     const [feature3, set3] = useState(false);
     const [feature4, set4] = useState(false);
     const [feature5, set5] = useState(false);
-    
+    const titleText = "Either select features or write your own below!"
     return (
         <View style={styles.container}>
+            <Top style = {styles.titleStyle}/>
             <CheckBox
                 onPress={() => set1(!feature1)}
                 title="Example Feature 1"
@@ -48,4 +49,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "left",
       },
+    titleStyle: {
+      fontFamily: "Cochin"
+    }
 });
