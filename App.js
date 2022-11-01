@@ -36,8 +36,11 @@ export default function App() {
               onPress={() => set5(!feature5)}
               title="Example Feature 5"
               isChecked={feature5}
-            />
-            
+            />    
+             <div>
+              <button>Insert text here</button>
+              <textarea>rows="5" cols="10"</textarea>
+            </div>  
         </View>
       );
     }
