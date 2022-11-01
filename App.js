@@ -13,30 +13,31 @@ export default function App() {
     return (
         <View style={styles.container}>
             <CheckBox
-                onPress={() => set1(!feature1)}
-                title="Example Feature 1"
-                isChecked={feature1}
-              />
-              <CheckBox
-                onPress={() => set2(!feature2)}
-                title="Example Feature 2"
-                isChecked={feature2}
-              />
-              <CheckBox
-                onPress={() => set3(!feature3)}
-                title="Example Feature 3"
-                isChecked={feature3}
-              />
-              <CheckBox
-                onPress={() => set4(!feature4)}
-                title="Example Feature 4"
-                isChecked={feature4}
-              />
-              <CheckBox
-                onPress={() => set5(!feature5)}
-                title="Example Feature 5"
-                isChecked={feature5}
-              />
+              onPress={() => set1(!feature1)}
+              title="Example Feature 1"
+              isChecked={feature1}
+            />
+            <CheckBox
+              onPress={() => set2(!feature2)}
+              title="Example Feature 2"
+              isChecked={feature2}
+            />
+            <CheckBox
+              onPress={() => set3(!feature3)}
+              title="Example Feature 3"
+              isChecked={feature3}
+            />
+            <CheckBox
+              onPress={() => set4(!feature4)}
+              title="Example Feature 4"
+              isChecked={feature4}
+            />
+            <CheckBox
+              onPress={() => set5(!feature5)}
+              title="Example Feature 5"
+              isChecked={feature5}
+            />
+            
         </View>
       );
     }
