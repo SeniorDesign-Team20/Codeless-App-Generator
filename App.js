@@ -1,9 +1,10 @@
 import { StyleSheet, View } from "react-native";
 import { useState } from "react";
 import CheckBox from "./CheckBox";
+import firebaseConfig from "./firebase";
 import Top from './title';
-
 import EnterFeatures from "./inputFeatures";
+
 
 export default function App() {
     const [feature1, set1] = useState(false);
