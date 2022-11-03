@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { useState } from "react";
 import CheckBox from "./CheckBox";
+import firebaseConfig from "./firebase";
 //import Headers from "./TextAndHeaders";
 
 export default function App() {
