@@ -1,8 +1,15 @@
 import { StyleSheet, View,StyleSheet } from "react-native";
 import { useState } from "react";
 import CheckBox from "./CheckBox";
+<<<<<<< HEAD
 //import Headers from "./TextAndHeaders";
 import UselessTextInput from "./Textbox";
+=======
+import firebaseConfig from "./firebase";
+import Top from './title';
+import EnterFeatures from "./inputFeatures";
+
+>>>>>>> 800f6fb2a69be3d3308adc565899ecfc5b5e9262
 
 export default function App() {
     const [feature1, set1] = useState(false);
@@ -10,10 +17,39 @@ export default function App() {
     const [feature3, set3] = useState(false);
     const [feature4, set4] = useState(false);
     const [feature5, set5] = useState(false);
+<<<<<<< HEAD
 
+=======
+    var [features, setFeatures] = useState([]);
+    var confirmHandle = (InputText) =>{
+      //connect to twitter and pull the data to detect bot
+      //Implement here
+
+
+      //Alert when input is empt
+      if(InputText.length < 1){
+        Alert.alert('Please Note',
+          'Account Name can not be empty!',
+        [{text: 'OK', onPress: () => console.log('alert closed')}])
+      }
+      //Alert when account does not exis
+
+     
+      //implement here
+      setUser(InputText); 
+
+       //Display Acount Bot Score, implement score data here.
+
+       Alert.alert(InputText,"His or Her bot score is 0/5",[
+        {text:'Nice!',onpress: () => console.log('Check complete')}
+       ])
+    }
+>>>>>>> 800f6fb2a69be3d3308adc565899ecfc5b5e9262
     return (
         <View style={styles.container}>
+            <Top style = {styles.titleStyle}/>
             <CheckBox
+<<<<<<< HEAD
               onPress={() => set1(!feature1)}
               title="Example Feature 1"
               isChecked={feature1}
@@ -39,16 +75,44 @@ export default function App() {
               isChecked={feature5}
             />    
             <UselessTextInput>{style = styles.input}</UselessTextInput>
+=======
+                onPress={() => set1(!feature1)}
+                title="Example Feature 1"
+                isChecked={feature1}
+              />
+              <CheckBox
+                onPress={() => set2(!feature2)}
+                title="Example Feature 2"
+                isChecked={feature2}
+              />
+              <CheckBox
+                onPress={() => set3(!feature3)}
+                title="Example Feature 3"
+                isChecked={feature3}
+              />
+              <CheckBox
+                onPress={() => set4(!feature4)}
+                title="Example Feature 4"
+                isChecked={feature4}
+              />
+              <CheckBox
+                onPress={() => set5(!feature5)}
+                title="Example Feature 5"
+                isChecked={feature5}
+              />
+            
+            <EnterFeatures confirmHandle ={confirmHandle}/>
+>>>>>>> 800f6fb2a69be3d3308adc565899ecfc5b5e9262
         </View>
       );
     }
   
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: "#fff",
         justifyContent: "center",
         alignItems: "left",
+<<<<<<< HEAD
     },
     input: {
       height: 40,
@@ -56,4 +120,13 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       padding: 10,
     },
+=======
+        top: 0
+      },
+    titleStyle: {
+      flex: 1,
+      fontFamily: "Cochin",
+      top: 0
+    }
+>>>>>>> 800f6fb2a69be3d3308adc565899ecfc5b5e9262
 });
