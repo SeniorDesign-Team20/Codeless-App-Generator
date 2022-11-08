@@ -1,7 +1,8 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View,StyleSheet } from "react-native";
 import { useState } from "react";
 import CheckBox from "./CheckBox";
 //import Headers from "./TextAndHeaders";
+import UselessTextInput from "./Textbox";
 
 export default function App() {
     const [feature1, set1] = useState(false);
@@ -9,7 +10,7 @@ export default function App() {
     const [feature3, set3] = useState(false);
     const [feature4, set4] = useState(false);
     const [feature5, set5] = useState(false);
-    
+
     return (
         <View style={styles.container}>
             <CheckBox
@@ -37,10 +38,7 @@ export default function App() {
               title="Example Feature 5"
               isChecked={feature5}
             />    
-             <div>
-              <button>Insert text here</button>
-              <textarea>rows="5" cols="10"</textarea>
-            </div>  
+            <UselessTextInput>{style = styles.input}</UselessTextInput>
         </View>
       );
     }
@@ -51,5 +49,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         justifyContent: "center",
         alignItems: "left",
-      },
+    },
+    input: {
+      height: 40,
+      margin: 12,
+      borderWidth: 1,
+      padding: 10,
+    },
 });
