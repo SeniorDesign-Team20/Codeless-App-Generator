@@ -1,8 +1,8 @@
-import { StyleSheet, View } from "react-native";
-import { useState } from "react";
+import { StyleSheet, View, Text } from "react-native";
+import { useState, useEffect } from "react";
 import CheckBox from "./CheckBox";
-import firebaseConfig from "./firebase";
-//import Headers from "./TextAndHeaders";
+import Firebase from "./firebase";
+
 
 export default function App() {
     const [feature1, set1] = useState(false);
@@ -10,6 +10,15 @@ export default function App() {
     const [feature3, set3] = useState(false);
     const [feature4, set4] = useState(false);
     const [feature5, set5] = useState(false);
+    const [url, seturl] = useState('');
+
+    useEffect(() => {
+      Firebase().then((res) => {
+        seturl(res);
+      })
+
+    }, [])
+
     
     return (
         <View style={styles.container}>
@@ -38,9 +47,13 @@ export default function App() {
                 title="Example Feature 5"
                 isChecked={feature5}
               />
+              <Text>
+                Hello, this is the URL: {url}
+              </Text>
         </View>
       );
     }
+
   
 const styles = StyleSheet.create({
     container: {
