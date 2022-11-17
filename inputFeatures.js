@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { StyleSheet, Text, Image,TouchableOpacity, Button, View, TextInput} from 'react-native';
 
 //Allow user to enter account names
-export default function EnterFeatures({confirmHandle}) {
+export default function EnterFeatures({confirmFeatures}) {
     var[defaultText, EnterText] = useState('');
 
     const redirect = (val) =>(
@@ -10,16 +10,16 @@ export default function EnterFeatures({confirmHandle}) {
     )
     return(
      <View style={styles.enter}>
-         <TextInput 
+         {/* <TextInput 
          style = {styles.enter}
          placeholder ='Enter Features Here ... '
          onChangeText={redirect}>
-         </TextInput>
+         </TextInput> */}
          <Button 
            style = {styles.ConfirmButton}
            title="Confirm" 
            color ='green'
-           onPress={() => confirmHandle(defaultText)}
+           onPress={() => confirmFeatures(defaultText)}
             />
       </View>
     )
