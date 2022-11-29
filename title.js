@@ -12,15 +12,18 @@ export default function Top() {
 
 const styles = StyleSheet.create({
     toppart:{
-        height:80,
-        width:500,
+        height: "500",
+        width: "100%",
         paddingTop:29,
-        backgroundColor:'#1e90ff',  
+        backgroundColor:'#1e90ff',
+        alignItems: "center"
     },
     welcomenote:{
-        textAlign: 'center',
-        fontSize:'20',
+        alignItems: "center",
+        textAlign: "center",
+        fontSize:'30',
         fontWeight:'bold',
-        color: 'white'
+        color: 'white',
+        paddingBottom: 30
     }
 })

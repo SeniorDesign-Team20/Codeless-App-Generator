@@ -10,13 +10,17 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^0.17.0",
+    "@react-native-community/checkbox": "^0.5.14",
+    "@expo/webpack-config": "^0.17.0",
     "@firebase/storage": "^0.9.13",
     "expo": "~46.0.16",
     "expo-status-bar": "~1.4.0",
     "firebase": "^9.13.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
+    "react-dom": "18.0.0",
     "react-native": "0.69.6",
+    "react-native-select-multiple": "^2.1.0",
     "react-native-web": "~0.18.7",
     "yarn": "^1.22.19"
   },

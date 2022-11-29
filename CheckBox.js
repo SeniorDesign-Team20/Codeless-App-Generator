@@ -1,11 +1,18 @@
+
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-  
+
 const CheckBox = (props) => {
     const iconName = props.isChecked ?
         "checkbox-marked" : "checkbox-blank-outline";
-  
+    // const toggleChoice = props.toggleChoice; 
+    // const feature = props.feature;
+    // const [checked, setChecked] = useState(false);
+    // const handleChange = () =>{
+    //     setChecked(!checked); toggleChoice(feature);
+    // }
     return (
         <View style={styles.container}>
             <Pressable onPress={props.onPress}>
@@ -16,13 +23,13 @@ const CheckBox = (props) => {
         </View>
     );
 };
-  
+
 export default CheckBox;
   
 const styles = StyleSheet.create({
     container: {
         justifyContent: "flex-start",
-        alignItems: "center",
+        alignContent: "center",
         flexDirection: "row",
         width: 300,
         marginTop: 5,
@@ -34,4 +41,4 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         fontWeight: "600",
     },
-});
+}); 
