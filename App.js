@@ -1,13 +1,13 @@
 import { StyleSheet, View, Alert, FlatList, Button, Text, TextInput } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Checkbox from "./CheckBox";
+//import Firebase from "./firebase";
 import Top from './title';
 //import displaySelection from "./DisplaySelection";
-import EnterFeatures from "./inputFeatures";
-import appendFeature from "./AppendFeatures"; 
-//import confirmFeatures from "./DisplaySelection";
+//import EnterFeatures from "./inputFeatures";
+//import appendFeature from "./AppendFeatures"; 
 
-//import CheckBox from '@react-native-community/checkbox';
+
 
 export default function App() {
     const [feature1, set1] = useState(false);
@@ -15,6 +15,20 @@ export default function App() {
     const [feature3, set3] = useState(false);
     const [feature4, set4] = useState(false);
     const [feature5, set5] = useState(false);
+
+    //const [url, seturl] = useState('');
+
+    // useEffect(() => {
+    //   Firebase().then((res) => {
+    //     seturl(res);
+    //   })
+
+    // }, [])
+
+    
+
+    //var [features, setFeatures] = useState([]);
+    
     const [selectedFeatures, setFeatures] = useState([]);
     const setFeat1 = (feat) => {
       set1(!feat);
@@ -64,6 +78,7 @@ export default function App() {
     const redirect = (val) =>(
       EnterText(val)
     )
+
     return (
         <View style={styles.container}>
             <Top style = {styles.titleStyle}/>
@@ -109,9 +124,11 @@ export default function App() {
                 <Text> You selected: {selectedFeatures.toString()}</Text>
             </View>
             
+
         </View>
       );
     }
+  
   
 const styles = StyleSheet.create({
     container: {
@@ -160,8 +177,6 @@ const styles = StyleSheet.create({
       borderBottomWidth: 1,
       borderBottomColor: 'grey',
       width: 400},
-    outputText:{
-      
-    }
+    
 });
 
