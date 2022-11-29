@@ -27,8 +27,6 @@ const Firebase = () => {
   // const db = getDatabase(app);
 
 
-  // Reading data using database
-  // const dbRef = ref(getDatabase());
 
   const storageRef = ref(storage);
   const textFileRef = ref(storage, '/firebase_test.txt');
@@ -76,7 +74,7 @@ const Firebase = () => {
           console.log(url);
       }
     });
-   return url;
+    return url;
   }
 
   export default Firebase;
