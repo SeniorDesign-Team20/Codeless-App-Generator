@@ -1,9 +1,10 @@
-import { StyleSheet, View } from "react-native";
-import { useState } from "react";
+import { StyleSheet, View, Text } from "react-native";
+import { useState, useEffect } from "react";
 import CheckBox from "./CheckBox";
-import firebaseConfig from "./firebase";
+import Firebase from "./firebase";
 import Top from './title';
 import EnterFeatures from "./inputFeatures";
+
 
 
 export default function App() {
@@ -12,6 +13,18 @@ export default function App() {
     const [feature3, set3] = useState(false);
     const [feature4, set4] = useState(false);
     const [feature5, set5] = useState(false);
+
+    const [url, seturl] = useState('');
+
+    useEffect(() => {
+      Firebase().then((res) => {
+        seturl(res);
+      })
+
+    }, [])
+
+    
+
     var [features, setFeatures] = useState([]);
     var confirmHandle = (InputText) =>{
       //connect to twitter and pull the data to detect bot
@@ -36,6 +49,7 @@ export default function App() {
         {text:'Nice!',onpress: () => console.log('Check complete')}
        ])
     }
+
     return (
         <View style={styles.container}>
             <Top style = {styles.titleStyle}/>
@@ -64,11 +78,18 @@ export default function App() {
                 title="Example Feature 5"
                 isChecked={feature5}
               />
+
+              <Text>
+                Hello, this is the URL: {url}
+              </Text>
+
             
             <EnterFeatures confirmHandle ={confirmHandle}/>
+
         </View>
       );
     }
+
   
 const styles = StyleSheet.create({
     container: {
