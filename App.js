@@ -101,7 +101,7 @@ export default function App() {
                 <Button 
                   style = {styles.ConfirmButton}
                   title="Confirm" 
-                  color ='green'
+                  color ='red'
                   onPress={() => confirmFeatures(defaultText)}
                 />
             </View>
@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
     displaySelectionContainer: {
       flex: 1,
       backgroundColor: "#fff",
-      justifyContent: "flex-end",
-      alignItems:"flex-end",
+      justifyContent: "flex-start",
+      alignItems:"flex-start",
       flexDirection: "row"
     },
     enter:{
