@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
         width: "100%",
         paddingTop:29,
         backgroundColor:'#1e90ff',
-        alignItems: "center"
+        alignItems: "center",
+        alignSelf: "flex-start"
     },
     welcomenote:{
         alignItems: "center",
