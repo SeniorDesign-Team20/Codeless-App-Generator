@@ -30,6 +30,7 @@ export default function App() {
     //var [features, setFeatures] = useState([]);
     
     const [selectedFeatures, setFeatures] = useState([]);
+
     const setFeat1 = (feat) => {
       set1(!feat);
       if (!feat)
@@ -42,6 +43,7 @@ export default function App() {
       }
       console.log(selectedFeatures.toString())
     }
+
     const setFeat2 = (feat) => {
       set2(!feat);
       if (!feat)
@@ -54,6 +56,7 @@ export default function App() {
       }
       console.log(selectedFeatures.toString())
     }
+
     const setFeat3 = (feat) => {
       set3(!feat);
       if (!feat)
@@ -66,6 +69,7 @@ export default function App() {
       }
       console.log(selectedFeatures.toString())
     }
+
     const setFeat4 = (feat) => {
       set4(!feat);
       if (!feat)
@@ -78,6 +82,7 @@ export default function App() {
       }
       console.log(selectedFeatures.toString())
     }
+
     const setFeat5 = (feat) => {
       set5(!feat);
       if (!feat)
@@ -92,12 +97,30 @@ export default function App() {
     }
 
     var[defaultText, EnterText] = useState('');
+
     const confirmFeatures = (inputText) => {
+        
         setFeatures(arr => [...arr, inputText])
     }
+
     const removeFeature = () => {
+        let featureToRemove = selectedFeatures.slice(-1)[0] 
+        switch (featureToRemove)
+        {
+          case "Feature1":
+            set1(false)
+          case "Feature2":
+            set2(false)
+          case "Feature3":
+            set3(false)
+          case "Feature4":
+            set4(false)
+          case "Feature5":
+            set5(false)
+        }
         setFeatures(arr => arr.slice(0, -1))
     }
+
     const redirect = (val) =>(
       EnterText(val)
     )
@@ -136,8 +159,12 @@ export default function App() {
                   />    
                   <TextInput
                     style = {styles.enter}
-                    placeholder ='Enter A Feature Here ... '
-                    onChangeText={redirect}>
+                    value = {defaultText}
+                    onFocus={() => EnterText(' ')}
+                    onSubmitEditing = {() => confirmFeatures(defaultText)}
+                    placeholder ='Enter a feature here ... '
+                    onChangeText={redirect}
+                    >
                   </TextInput>
                   <Button 
                     style = {styles.ConfirmButton}
@@ -145,7 +172,16 @@ export default function App() {
                     color ='green'
                     onPress={() => confirmFeatures(defaultText)}
                   />
-                  <Text style = {{flex: 1, flexWrap: "wrap", flexShrink:1}}> You selected: {selectedFeatures.toString()}</Text>
+
+                  <FlatList
+                      data = {selectedFeatures}
+                      renderItem={({ item }) => (
+                        <View style={styles.bullet}>
+                          <Text>&#8226; {item}</Text>
+                        </View>
+                      )}
+                      keyExtractor={(item, index) => index.toString()}
+                  />
                   <Button
                     title="Remove Feature"
                     color='red'
@@ -231,8 +267,21 @@ const styles = StyleSheet.create({
       marginBottom: 10,
       marginTop:50,
       borderBottomWidth: 1,
-      borderBottomColor: 'grey',
-      width: 400},
+      borderBottomColor: 'black',
+      width: 750},
     
 });
 
+                  {/* <Text 
+                      style = {
+                        {
+                          flex: 1, 
+                          flexWrap: "wrap", 
+                          flexShrink:1,
+                          fontSize:18,
+                          color: "black",
+                        }}>
+                     {'\n'}
+                     You selected: {selectedFeatures.toString()}
+                     {'\n'}
+                  </Text> */}
