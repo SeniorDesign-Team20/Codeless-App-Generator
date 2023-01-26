@@ -1,9 +1,11 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Linking } from "react-native";
 import { useState, useEffect } from "react";
 import CheckBox from "./CheckBox";
 import Firebase from "./firebase";
 import Top from './title';
 import EnterFeatures from "./inputFeatures";
+
+
 
 
 
@@ -22,6 +24,7 @@ export default function App() {
       })
 
     }, [])
+
 
     
 
@@ -80,10 +83,16 @@ export default function App() {
               />
 
               <Text>
-                Hello, this is the URL: {url}
-              </Text>
-
-            
+                Download your application here:
+              </Text> 
+              {url ? (
+                <TouchableOpacity style = {styles.button} onPress={() => Linking.openURL(url)}>
+                  <Text style = {styles.buttontext}>Download</Text>
+                </TouchableOpacity>
+              ) : (
+                <Text>Loading...</Text>
+              )}
+              
             <EnterFeatures confirmHandle ={confirmHandle}/>
 
         </View>
@@ -102,5 +111,18 @@ const styles = StyleSheet.create({
       flex: 1,
       fontFamily: "Cochin",
       top: 0
-    }
+    },
+    button: {
+      backgroundColor: "#009688",
+      borderRadius: 5,
+      paddingVertical: 5,
+      paddingHorizontal: 5
+    },
+    buttontext: {
+      fontSize: 18,
+      color: "#fff",
+      fontWeight: "bold",
+      alignSelf: "left",
+      textTransform: "uppercase"
+    },
 });
