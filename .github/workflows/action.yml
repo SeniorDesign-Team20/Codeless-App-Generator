@@ -24,7 +24,7 @@ name: Set environment variables
 on: [push]
 
 env:
-  YOUR_SECRET: ${{ secrets.YOUR_SECRET }}
+  YOUR_SECRET: ${{ secrets.FIREBASEAPIKEY }}
 
 jobs:
   build:
