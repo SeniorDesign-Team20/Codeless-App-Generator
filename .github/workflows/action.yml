@@ -1,0 +1,43 @@
+# name: GitHub Actions Secrets
+
+# on:
+#   repository_dispatch:
+#     branches: [ main ]
+
+
+# jobs:
+#   secrets-in-github-actions:
+#     runs-on: windows-latest
+
+#     # The Secrect Actions GitHub example has three steps
+#     steps:
+#       # Show how to print unmasked GitHub secrets to the console
+#       - name: Step 1 - Echo out a GitHub Actions Secret to the logs
+#         run: |
+#           echo "The GitHub Action Secret will be masked:  "
+#           echo ${{ secrets.SECRET_TOKEN }}
+#           echo "Trick to echo GitHub Actions Secret:  "
+#           echo ${{secrets.SECRET_TOKEN}} | sed 's/./& /g' 
+
+name: Set environment variables
+
+on: [push]
+
+env:
+  YOUR_SECRET: ${{ secrets.FIREBASEAPIKEY }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set environment variables
+      run: echo "YOUR_SECRET=$YOUR_SECRET"
+
+    - name: Use environment variables in script
+      run: |
+        echo "Using environment variables in script..."
+        echo "YOUR_SECRET=$YOUR_SECRET"
