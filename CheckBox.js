@@ -7,12 +7,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const CheckBox = (props) => {
     const iconName = props.isChecked ?
         "checkbox-marked" : "checkbox-blank-outline";
-    // const toggleChoice = props.toggleChoice; 
-    // const feature = props.feature;
-    // const [checked, setChecked] = useState(false);
-    // const handleChange = () =>{
-    //     setChecked(!checked); toggleChoice(feature);
-    // }
     return (
         <View style={styles.container}>
             <Pressable onPress={props.onPress}>
