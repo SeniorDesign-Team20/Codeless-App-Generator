@@ -1,15 +1,17 @@
 import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
-import { ResponseType } from 'expo-auth-session';
+import { ResponseType, TokenResponse } from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
 import { Button, StyleSheet, View, TouchableOpacity } from 'react-native';
+import jwtDecode from 'jwt-decode';
 import Main from './Main'
 
 // Initialize Firebase
 initializeApp({
-  apiKey: "${{ secrets.FIREBASEAPIKEY }}",
+  apiKey: process.env.API_KEY,
+ // apiKey: "AIzaSyCKb7hzV6JrrWShNYF6zPxNvDc-jxUEAlU",
   authDomain: "codeless-app-generator.firebaseapp.com",
   projectId: "codeless-app-generator",
   storageBucket: "codeless-app-generator.appspot.com",
@@ -35,12 +37,19 @@ export default function App() {
       const credential = GoogleAuthProvider.credential(id_token);
       signInWithCredential(auth, credential);
       setIsSignedIn(true);
+      const decodedToken = jwtDecode(id_token);
+      console.log(decodedToken);
+      //console.log(response)
+      //console.log(credential)
+      //console.log(id_token)
     }
+    console.log(response?.type)
   }, [response]);
 
   const handleSignOut = () => {
+    const auth = getAuth();
     setIsSignedIn(false);
-    signOut();
+    signOut(auth);
   };
 
   return (
@@ -54,8 +63,7 @@ export default function App() {
         <View style = {[styles.loginButton, { width: 100, height:100 }]}>
           <Button
             height = '100'
-            width = '100'
-            
+            width = '100'           
             color = 'steelblue'
             disabled={!request}
             title="Login"
