@@ -7,18 +7,27 @@ import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from 'fire
 import { Button, StyleSheet, View, TouchableOpacity } from 'react-native';
 import jwtDecode from 'jwt-decode';
 import Main from './Main'
+//import Firebase from './firebase';
 
 // Initialize Firebase
-initializeApp({
-  apiKey: process.env.API_KEY,
- // apiKey: "AIzaSyCKb7hzV6JrrWShNYF6zPxNvDc-jxUEAlU",
+const firebaseConfig = {
+  apiKey: "${{ secrets.FIREBASEAPIKEY }}",
   authDomain: "codeless-app-generator.firebaseapp.com",
   projectId: "codeless-app-generator",
   storageBucket: "codeless-app-generator.appspot.com",
   messagingSenderId: "${{ secrets.MESSAGINGSENDERID }}",
   appId: "${{ secrets.APPID }}",
   measurementId: "${{ secrets.MEASURMENTID }}"
-});
+};
+initializeApp(firebaseConfig);
+  // //apiKey: "${{ secrets.FIREBASEAPIKEY }}",
+  // authDomain: "codeless-app-generator.firebaseapp.com",
+  // projectId: "codeless-app-generator",
+  // storageBucket: "codeless-app-generator.appspot.com",
+  // messagingSenderId: "${{ secrets.MESSAGINGSENDERID }}",
+  // appId: "${{ secrets.APPID }}",
+  // measurementId: "${{ secrets.MEASURMENTID }}"
+//});
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -39,6 +48,7 @@ export default function App() {
       setIsSignedIn(true);
       const decodedToken = jwtDecode(id_token);
       console.log(decodedToken);
+     
       //console.log(response)
       //console.log(credential)
       //console.log(id_token)
