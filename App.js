@@ -1,17 +1,50 @@
 import * as React from 'react';
+//import Config from 'react-native-config';
 import * as WebBrowser from 'expo-web-browser';
 import { ResponseType, TokenResponse } from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
 import { Button, StyleSheet, View, TouchableOpacity } from 'react-native';
+//import { Octokit } from '@octokit/core';
+import getSecrets from './getSecrets';
 import jwtDecode from 'jwt-decode';
 import Main from './Main'
-//import Firebase from './firebase';
 
+//import Firebase from './firebase';
+//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
 // Initialize Firebase
+//const key = process.env.FIREBASE_API_KEY
+
+// const octokit = new Octokit({
+//   auth: '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'
+// });
+
+// const getSecretValue = async () => {
+//   try
+//   {
+//     const {response} = await octokit.request('GET /orgs/{org}/actions/secrets/{secret_name}', {
+//       org: 'BU Engineering Senior Design - Team 20',
+//       secret_name: 'FIREBASEAPIKEY'
+//     });
+//     //const secretValue = response.data.value;
+//     console.log(response);
+//   }
+//   catch(error)
+//   {
+//     console.error(error);
+//   }
+// };
+// const {response} = await octokit.request('GET /orgs/{org}/actions/secrets/{secret_name}', {
+//   org: 'BU Engineering Senior Design - Team 20',
+//   secret_name: 'FIREBASEAPIKEY'
+// });
+
+// console.log(response)
+console.log(getSecrets());
+
 const firebaseConfig = {
-  apiKey: "${{ secrets.FIREBASEAPIKEY }}",
+  //apiKey: Config.FIREBASE_API_KEY,
   authDomain: "codeless-app-generator.firebaseapp.com",
   projectId: "codeless-app-generator",
   storageBucket: "codeless-app-generator.appspot.com",
