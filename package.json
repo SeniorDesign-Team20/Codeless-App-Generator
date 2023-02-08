@@ -11,25 +11,41 @@
   "dependencies": {
     "@expo/webpack-config": "^0.17.0",
     "@firebase/storage": "^0.9.13",
+    "@octokit/core": "^4.2.0",
     "@react-native-community/checkbox": "^0.5.14",
     "@react-native-community/google-signin": "^5.0.0",
     "expo": "~46.0.16",
+    "expo-application": "~4.2.2",
     "expo-auth-session": "~3.7.4",
+    "expo-random": "~12.3.0",
     "expo-status-bar": "~1.4.0",
     "firebase": "^9.16.0",
     "firebaseui": "^6.0.2",
+    "jwt-decode": "^3.1.2",
+    "octokit": "^2.0.14",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-native": "0.69.6",
+    "react-native-config": "^1.5.0",
     "react-native-google-signin": "^2.1.1",
     "react-native-select-multiple": "^2.1.0",
     "react-native-web": "~0.18.7",
-    "yarn": "^1.22.19",
-    "expo-random": "~12.3.0",
-    "expo-application": "~4.2.2"
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
   },
-  "private": true
+  "private": true,
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
