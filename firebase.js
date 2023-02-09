@@ -1,84 +1,75 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import 'firebase/auth';
-import { FirebaseAuth } from 'firebaseui-web';
-
+import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import JSZip from "jszip";
+import axios from 'axios'
+//import RNFetchBlob from "react-native-fetch-blob";
+// import myFetch from 'isomorphic-fetch';
+// import ReactNativeBlobUtil from 'react-native-blob-util';
+// import RNFetchBlob from 'react-native-fetch-blob';
+// import RNFetchBlob from 'rn-fetch-blob';
 //import { getDatabase } from 'firebase/database';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
+const firebaseConfig = {
+      apiKey: "${{ secrets.FIREBASEAPIKEY }}",
+      authDomain: "codeless-app-generator.firebaseapp.com",
+      projectId: "codeless-app-generator",
+      storageBucket: "codeless-app-generator.appspot.com",
+      messagingSenderId: "${{ secrets.MESSAGINGSENDERID }}",
+      appId: "${{ secrets.APPID }}"
+};
 
 
-const Firebase = () => {
-      // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "${{ secrets.FIREBASEAPIKEY }}",
-    authDomain: "codeless-app-generator.firebaseapp.com",
-    projectId: "codeless-app-generator",
-    storageBucket: "codeless-app-generator.appspot.com",
-    messagingSenderId: "${{ secrets.MESSAGINGSENDERID }}",
-    appId: "${{ secrets.APPID }}",
-    measurementId: "${{ secrets.MEASURMENTID }}"
-  };
+
+const Firebase = async () => {
 
   // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
+  const app2 = initializeApp(firebaseConfig, 'app2');
   // Initialize Cloud Storage and get a reference to the service
-  const storage = getStorage(app);
+  const storage = getStorage(app2);
   // const db = getDatabase(app);
 
+  const fileNames = ['Weather.js', 'firebase_test.txt'];
+  const promises = fileNames.map(async fileName => {
+    const fileRef = ref(storage,fileName);
+    console.log("got reference");
+    const url = await getDownloadURL(fileRef);
+    console.log("got download URL");
+    console.log(url);
 
+  //Trying axios - best so far, can fetch without the token in url
 
-  const storageRef = ref(storage);
-  const textFileRef = ref(storage, '/firebase_test.txt');
+  return axios.get(url,{
+    headers: {
+      //"Authorization": "Bearer a326015b-9783-4610-9afa-5347ab79e86b",
+      // "Accept": "*/*",
+      // "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15"
+    }
+  }).then(response => {
+    return {fileName, response: response.data}
+  })
+  .catch(error => {
+    console.error(error);
+  })
+  });
 
-  const url = getDownloadURL(textFileRef);
-  
+  const files = await Promise.all(promises);
+  const zip = new JSZip();
+  console.log("zipping");
+  files.forEach(({ fileName, response }) => {
+    zip.file(fileName, response);
+    console.log("zipped");
+  });
 
-  getDownloadURL(textFileRef)
-    .then((url) => {
-      // `url` is the download URL for 'images/firebase_test.txt'
-      console.log(url);
-      const url_return = url;
-      // This can be downloaded directly:
-      const xhr = new XMLHttpRequest();
-      xhr.responseType = 'blob';
-      xhr.onload = (event) => {
-        const blob = xhr.response;
-      };
-      xhr.open('GET', url);
-      xhr.send();
-      const URL = url;
-    })
-    .catch((error) => {
-      // Handle any errors
-      // A full list of error codes is available at
-      // https://firebase.google.com/docs/storage/web/handle-errors
-      switch (error.code) {
-        case 'storage/object-not-found':
-          // File doesn't exist
-          console.log('File doesnt exist');
-          break;
-        case 'storage/unauthorized':
-          // User doesn't have permission to access the object
-          console.log('user doesnt have permission to access object');
-          break;
-        case 'storage/canceled':
-          // User canceled the upload
-          console.log('User cancelled the upload');
-          break;
-        case 'storage/unknown':
-          // Unknown error occurred, inspect the server response
-          console.log('Unkownerror occurred, inspect the server response');
-          break;
-        default:
-          console.log(url);
-      }
-    });
-    return url;
-  }
+  const zipBlob = await zip.generateAsync({ type: 'blob' });
+  const zipRef = ref(storage, 'Features.zip/');
+  await uploadBytes(zipRef, zipBlob);
+  console.log('Uploaded a blob or file!');
+  const downloadURL = await getDownloadURL(zipRef);
+  return downloadURL;
 
-  export default Firebase;
-  
+}
+
+export default Firebase;

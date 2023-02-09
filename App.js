@@ -7,7 +7,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
 import { Button, StyleSheet, View, TouchableOpacity } from 'react-native';
 //import { Octokit } from '@octokit/core';
-import getSecrets from './getSecrets';
+//import getSecrets from './getSecrets';
 import jwtDecode from 'jwt-decode';
 import Main from './Main'
 
@@ -41,10 +41,10 @@ import Main from './Main'
 // });
 
 // console.log(response)
-console.log(getSecrets());
+//console.log(getSecrets());
 
 const firebaseConfig = {
-  //apiKey: Config.FIREBASE_API_KEY,
+  apiKey: "${{ secrets.FIREBASEAPIKEY }}",
   authDomain: "codeless-app-generator.firebaseapp.com",
   projectId: "codeless-app-generator",
   storageBucket: "codeless-app-generator.appspot.com",
