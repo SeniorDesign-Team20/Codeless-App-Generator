@@ -1,4 +1,4 @@
-import { StyleSheet, View, Alert, FlatList, Button, Text, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Alert, FlatList, Button, Text, TextInput, TouchableOpacity, Linking } from "react-native";
 import { useState, useEffect } from "react";
 import Checkbox from "./CheckBox";
 import Top from './title';
@@ -124,9 +124,9 @@ export default function Main() {
 
     return (
         <View style={styles.container}>
-            <View style = {styles.titleContainer}>
+            {/* <View style = {styles.titleContainer}>
               <Top style = {styles.titleStyle}/>
-            </View>
+            </View> */}
             <View style = {styles.contentContainer}>
               <View syle={styles.chooseFeaturesContainer}>
                   <Checkbox
