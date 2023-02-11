@@ -1,7 +1,8 @@
-import { StyleSheet, View, Alert, FlatList, Button, Text, TextInput } from "react-native";
+import { StyleSheet, View, Alert, FlatList, Button, Text, TextInput, TouchableOpacity, Linking } from "react-native";
 import { useState, useEffect } from "react";
 import Checkbox from "./CheckBox";
 import Top from './title';
+import Firebase from "./firebase";
 
 export default function Main() {
     
@@ -12,6 +13,16 @@ export default function Main() {
     const [feature5, set5] = useState(false);
     
     const [selectedFeatures, setFeatures] = useState([]);
+
+    const [url, seturl] = useState('');
+
+    useEffect(() => {
+      Firebase().then((res) => {
+        seturl(res);
+      })
+
+    }, [])
+
 
     const setFeat1 = (feat) => {
       set1(!feat);
@@ -113,9 +124,9 @@ export default function Main() {
 
     return (
         <View style={styles.container}>
-            <View style = {styles.titleContainer}>
+            {/* <View style = {styles.titleContainer}>
               <Top style = {styles.titleStyle}/>
-            </View>
+            </View> */}
             <View style = {styles.contentContainer}>
               <View syle={styles.chooseFeaturesContainer}>
                   <Checkbox
@@ -180,11 +191,22 @@ export default function Main() {
                       )}
                       keyExtractor={(item, index) => index.toString()}
                   />
+                  
 
                   <Button
                     title="Confirm Selections"
                     color='darkgreen'
                   />
+                  <Text>
+                    Download your application here:
+                  </Text> 
+                  {url ? (
+                    <TouchableOpacity style = {styles.button} onPress={() => Linking.openURL(url)}>
+                      <Text style = {styles.buttontext}>Download</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <Text>Loading...</Text>
+                  )}
 
               </View>
               <View style = {styles.displaySelectionContainer}>

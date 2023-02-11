@@ -5,12 +5,12 @@ import { ResponseType, TokenResponse } from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
-import { Button, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { Button, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 //import { Octokit } from '@octokit/core';
-import getSecrets from './getSecrets';
+//import getSecrets from './getSecrets';
 import jwtDecode from 'jwt-decode';
 import Main from './Main'
-
+//import DropdownExample from './DropDown';
 //import Firebase from './firebase';
 //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
 // Initialize Firebase
@@ -41,10 +41,10 @@ import Main from './Main'
 // });
 
 // console.log(response)
-console.log(getSecrets());
+//console.log(getSecrets());
 
 const firebaseConfig = {
-  //apiKey: Config.FIREBASE_API_KEY,
+  apiKey: "${{ secrets.FIREBASEAPIKEY }}",
   authDomain: "codeless-app-generator.firebaseapp.com",
   projectId: "codeless-app-generator",
   storageBucket: "codeless-app-generator.appspot.com",
@@ -71,7 +71,7 @@ export default function App() {
       clientId: '201718739843-ocjvk939h3litgm9nsqrco7k4jnr39fq.apps.googleusercontent.com',
     },
   );
-
+  const [firstName, setFirstName] = React.useState("")
   React.useEffect(() => {
     if (response?.type === 'success') {
       const { id_token } = response.params;
@@ -80,12 +80,14 @@ export default function App() {
       signInWithCredential(auth, credential);
       setIsSignedIn(true);
       const decodedToken = jwtDecode(id_token);
-      console.log(decodedToken);
-     
+      console.log("User: ")
+      console.log(decodedToken.given_name);
+      setFirstName(decodedToken.given_name)
       //console.log(response)
       //console.log(credential)
       //console.log(id_token)
     }
+    console.log("Sign in Result: ")
     console.log(response?.type)
   }, [response]);
 
@@ -99,9 +101,14 @@ export default function App() {
     <View style={styles.container}>
       {isSignedIn ? (
         <>
-          <Main/>
-          <Button title="Logout" color = 'steelblue' onPress={() => {handleSignOut();}} />
-        </>
+        <View style={styles.toppart}>
+              <Text style={styles.welcomenote}>Codeless App Generator!</Text>
+              <Text style={styles.greeting}> Hello, {firstName}</Text>             
+          {/*<DropdownExample name = {firstName}/>*/}
+        </View>
+        <Main/>
+        <Button title="Logout" color = 'steelblue' onPress={() => {handleSignOut();}} />
+    </>
       ) : (
         <View style = {[styles.loginButton, { width: 100, height:100 }]}>
           <Button
@@ -130,5 +137,28 @@ const styles = StyleSheet.create({
         flex:3,
         alignSelf: 'center',
         justifyContent: 'center',
-      }
+      },
+      toppart:{
+        height: "500",
+        width: "100%",
+        paddingTop:29,
+        backgroundColor:'steelblue',
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    welcomenote:{
+        textAlign: "center",
+        fontSize:18,
+        fontWeight:'bold',
+        color: 'white',
+        paddingBottom: 30
+    },
+    greeting: {
+        position: "absolute",
+        top: 29,
+        right: 30,
+        fontSize:18,
+        fontWeight:'bold',
+        color: 'white',
+    }
     })
