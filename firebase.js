@@ -43,9 +43,6 @@ const Firebase = async () => {
 
   return axios.get(url,{
     headers: {
-      //"Authorization": "Bearer a326015b-9783-4610-9afa-5347ab79e86b",
-      // "Accept": "*/*",
-      // "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15"
     }
   }).then(response => {
     return {fileName, response: response.data}
