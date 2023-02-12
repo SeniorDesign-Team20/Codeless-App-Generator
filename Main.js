@@ -1,7 +1,6 @@
 import { StyleSheet, View, Alert, FlatList, Button, Text, TextInput, TouchableOpacity, Linking } from "react-native";
 import { useState, useEffect } from "react";
 import Checkbox from "./CheckBox";
-import Top from './title';
 import Firebase from "./firebase";
 
 export default function Main() {
@@ -28,10 +27,10 @@ export default function Main() {
       set1(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Feature1"])
+        setFeatures(arr => [...arr, "Google Sign-In"])
       }
       else{
-        const index = selectedFeatures.indexOf("Feature1")
+        const index = selectedFeatures.indexOf("Google Sign-In")
         selectedFeatures.splice(index, 1)
       }
       console.log(selectedFeatures.toString())
@@ -41,10 +40,10 @@ export default function Main() {
       set2(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Feature2"])
+        setFeatures(arr => [...arr, "Chat Forum"])
       }
       else{
-        const index = selectedFeatures.indexOf("Feature2")
+        const index = selectedFeatures.indexOf("Chat Forum")
         selectedFeatures.splice(index, 1)
       }
       console.log(selectedFeatures.toString())
@@ -54,10 +53,10 @@ export default function Main() {
       set3(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Feature3"])
+        setFeatures(arr => [...arr, "Weather"])
       }
       else{
-        const index = selectedFeatures.indexOf("Feature3")
+        const index = selectedFeatures.indexOf("Weather")
         selectedFeatures.splice(index, 1)
       }
       console.log(selectedFeatures.toString())
@@ -67,10 +66,10 @@ export default function Main() {
       set4(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Feature4"])
+        setFeatures(arr => [...arr, "Maps"])
       }
       else{
-        const index = selectedFeatures.indexOf("Feature4")
+        const index = selectedFeatures.indexOf("Maps")
         selectedFeatures.splice(index, 1)
       }
       console.log(selectedFeatures.toString())
@@ -80,10 +79,10 @@ export default function Main() {
       set5(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Feature5"])
+        setFeatures(arr => [...arr, "Payments Platform"])
       }
       else{
-        const index = selectedFeatures.indexOf("Feature5")
+        const index = selectedFeatures.indexOf("Payments Platform")
         selectedFeatures.splice(index, 1)
       }
       console.log(selectedFeatures.toString())
@@ -102,15 +101,15 @@ export default function Main() {
         let featureToRemove = selectedFeatures.slice(-1)[0] 
         switch (featureToRemove)
         {
-          case "Feature1":
+          case "Google Sign-In":
             set1(false)
-          case "Feature2":
+          case "Chat Forum":
             set2(false)
-          case "Feature3":
+          case "Weather":
             set3(false)
-          case "Feature4":
+          case "Maps":
             set4(false)
-          case "Feature5":
+          case "Payments Platform":
             set5(false)
         }
         setFeatures(arr => arr.slice(0, -1))
@@ -120,38 +119,33 @@ export default function Main() {
       EnterText(val)
     )
 
-    const [focused, setFocused] = useState(false);
-
     return (
         <View style={styles.container}>
-            {/* <View style = {styles.titleContainer}>
-              <Top style = {styles.titleStyle}/>
-            </View> */}
             <View style = {styles.contentContainer}>
               <View syle={styles.chooseFeaturesContainer}>
                   <Checkbox
                     onPress = {() =>{setFeat1(feature1)}}
-                    title="Example Feature 1"
+                    title="Google Sign-In"
                     isChecked={feature1}
                   />
                   <Checkbox
                     onPress = {() => setFeat2(feature2)}
-                    title="Example Feature 2"
+                    title="Chat Forum"
                     isChecked={feature2}
                   />
                   <Checkbox
                     onPress={() => setFeat3(feature3)}
-                    title="Example Feature 3"
+                    title="Weather"
                     isChecked={feature3}
                   />
                   <Checkbox
                     onPress={() => setFeat4(feature4)}
-                    title="Example Feature 4"
+                    title="Maps"
                     isChecked={feature4}
                   />
                   <Checkbox
                     onPress={() => setFeat5(feature5)}
-                    title="Example Feature 5"
+                    title="Payments Platform"
                     isChecked={feature5}
                   />    
                   <TextInput
@@ -164,17 +158,23 @@ export default function Main() {
                     >
                   </TextInput>
                   <View style = {{flexDirection:'row', justifyContent:'space-evenly'}}>
-                    <Button 
+                    <TouchableOpacity style = {styles.confirmButton} onPress={() => confirmFeatures(defaultText)}>
+                        <Text style = {styles.textStyle}>    Add  Feature    </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style = {styles.removeFeatureButton} onPress={()=> removeFeature()}>
+                        <Text style = {styles.textStyle}>    Remove Feature    </Text>
+                    </TouchableOpacity>
+                    {/* <Button 
                       style = {styles.ConfirmButton}
                       title="Add Feature" 
                       color ='darkgreen'
                       onPress={() => confirmFeatures(defaultText)}
-                    />
-                    <Button
+                    /> */}
+                    {/* <Button
                       title="Remove Feature"
                       color='coral'
                       onPress={() => removeFeature()}
-                    />
+                    /> */}
                   </View>
                   <FlatList
                       data = {selectedFeatures}
@@ -192,23 +192,27 @@ export default function Main() {
                       keyExtractor={(item, index) => index.toString()}
                   />
                   
-
-                  <Button
-                    title="Confirm Selections"
-                    color='darkgreen'
-                  />
-                  <Text>
-                    Download your application here:
-                  </Text> 
-                  {url ? (
-                    <TouchableOpacity style = {styles.button} onPress={() => Linking.openURL(url)}>
-                      <Text style = {styles.buttontext}>Download</Text>
+                  <View style = {styles.confirmSelectionsButton}>
+                    <TouchableOpacity style = {styles.confirmButton}>
+                      <Text style = {styles.textStyle}> Confirm Selections </Text>
                     </TouchableOpacity>
-                  ) : (
-                    <Text>Loading...</Text>
-                  )}
-
-              </View>
+                    {/* <Button style = {styles.button}
+                      title="Confirm Selections"
+                      color='darkgreen'
+                      
+                    /> */}
+                  </View>
+                  </View>
+                  <View style = {styles.generateDownloadAppContainer}> 
+                    {url ? (
+                      <TouchableOpacity style = {styles.generateButton} onPress={() => Linking.openURL(url)}>
+                        <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <Text>Loading...</Text>
+                    )}
+                  </View>
+              
               <View style = {styles.displaySelectionContainer}>
               </View>
             </View>
@@ -220,8 +224,40 @@ export default function Main() {
   
   
 const styles = StyleSheet.create({
-    bullet: {
-
+    confirmButton: {
+        backgroundColor: "darkgreen",
+        borderRadius: 10,
+        alignItems: "center",
+        height: 40
+    },
+    removeFeatureButton: {
+      backgroundColor: "coral",
+      borderRadius: 10,
+      alignItems: "center",
+      height: 40
+    },
+    generateButton: {
+      backgroundColor: "steelblue",
+      borderRadius: 10,
+      alignItems: "center",
+      height: 40
+    },
+    textStyle:
+    {
+      textAlign: "center",
+      fontSize:18,
+      fontWeight:'bold',
+      color: 'white',
+      paddingTop:7
+    },
+    confirmSelectionsButton: {
+      alignSelf: 'center',
+      justifyContent: 'center',
+      position: 'absolute',
+      bottom: "3%",
+      left: "25%",
+      width: '50%',
+      height: '10%',
     },
     container: {
         flex: 1,
@@ -229,7 +265,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         justifyContent: "flex-start",
         alignItems: "flex-start"
-        //top: 0
       },
       titleContainer: {
         flexDirection: "row",
@@ -239,8 +274,6 @@ const styles = StyleSheet.create({
       contentContainer: {
         flex: 5,
         flexDirection: "row",
-        // justifyContent: "space-between",
-        // alignContent: "center"
       },
     chooseFeaturesContainer: {
       flex: 1,
@@ -253,19 +286,12 @@ const styles = StyleSheet.create({
       
     },
     titleStyle: {
-      //flex: 1,
       fontFamily: "Cochin",
       top: 0
     },
     ConfirmButton:{
       marginTop: 100,
       marginBottom: 100
-      //fontSize: 15,
-      //fontFamily: "arial",
-      
-      //justifyContent: "center"
-      //alignSelf: "stretch",
-      //width: "50%"
     },
     item: {
       padding: 10,
@@ -289,19 +315,15 @@ const styles = StyleSheet.create({
       borderBottomWidth: 1,
       borderBottomColor: 'black',
       width: 750},
+
+      generateDownloadAppContainer: {
+        alignSelf: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        bottom: "3%",
+        left: "125%",
+        width: '50%',
+        height: '10%',
+      },
     
 });
-
-                  {/* <Text 
-                      style = {
-                        {
-                          flex: 1, 
-                          flexWrap: "wrap", 
-                          flexShrink:1,
-                          fontSize:18,
-                          color: "black",
-                        }}>
-                     {'\n'}
-                     You selected: {selectedFeatures.toString()}
-                     {'\n'}
-                  </Text> */}
