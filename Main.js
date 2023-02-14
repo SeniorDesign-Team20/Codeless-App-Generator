@@ -5,6 +5,15 @@ import Firebase from "./firebase";
 
 export default function Main() {
     
+  const fileNameMappings = {
+    "Google Sign-In": "GoogleSignIn.js",
+    "Chat Forum": "ChatForum.js",
+    "Weather": "Weather.js",
+  };
+  
+
+
+
     const [feature1, set1] = useState(false);
     const [feature2, set2] = useState(false);
     const [feature3, set3] = useState(false);
@@ -12,26 +21,23 @@ export default function Main() {
     const [feature5, set5] = useState(false);
     
     const [selectedFeatures, setFeatures] = useState([]);
-
+    const [selectedFiles, setFiles] = useState([]);
     const [url, seturl] = useState('');
 
-    useEffect(() => {
-      Firebase().then((res) => {
-        seturl(res);
-      })
-
-    }, [])
-
-
+    //newFunction(seturl, selectedFiles);
+    
+    console.log(url);
     const setFeat1 = (feat) => {
       set1(!feat);
       if (!feat)
       {
         setFeatures(arr => [...arr, "Google Sign-In"])
+        setFiles(arr => [... arr, fileNameMappings["Google Sign-In"]])
       }
       else{
         const index = selectedFeatures.indexOf("Google Sign-In")
         selectedFeatures.splice(index, 1)
+        selectedFiles.splice(index, 1)
       }
       console.log(selectedFeatures.toString())
     }
@@ -41,10 +47,12 @@ export default function Main() {
       if (!feat)
       {
         setFeatures(arr => [...arr, "Chat Forum"])
+        setFiles(arr => [... arr, fileNameMappings["Chat Forum"]])
       }
       else{
         const index = selectedFeatures.indexOf("Chat Forum")
         selectedFeatures.splice(index, 1)
+        selectedFiles.splice(index,1)
       }
       console.log(selectedFeatures.toString())
     }
@@ -54,10 +62,12 @@ export default function Main() {
       if (!feat)
       {
         setFeatures(arr => [...arr, "Weather"])
+        setFiles(arr => [...arr, fileNameMappings["Weather"]])
       }
       else{
         const index = selectedFeatures.indexOf("Weather")
         selectedFeatures.splice(index, 1)
+        selectedFiles.splice(index,1)
       }
       console.log(selectedFeatures.toString())
     }
@@ -67,10 +77,12 @@ export default function Main() {
       if (!feat)
       {
         setFeatures(arr => [...arr, "Maps"])
+        setFiles(arr => [...arr, fileNameMappings["Maps"]])
       }
       else{
         const index = selectedFeatures.indexOf("Maps")
         selectedFeatures.splice(index, 1)
+        selectedFiles.splice(index,1)
       }
       console.log(selectedFeatures.toString())
     }
@@ -80,17 +92,19 @@ export default function Main() {
       if (!feat)
       {
         setFeatures(arr => [...arr, "Payments Platform"])
+        setFiles(arr => [...arr, fileNameMappings["Payments Platform"]])
       }
       else{
         const index = selectedFeatures.indexOf("Payments Platform")
         selectedFeatures.splice(index, 1)
+        selectedFiles.splice(index, 1)
       }
       console.log(selectedFeatures.toString())
     }
 
     var[defaultText, EnterText] = useState('');
 
-    const confirmFeatures = (inputText) => {
+    const addFeature = (inputText) => {
       if (inputText == "" || inputText == " ")
         return  
       redirect('')
@@ -154,28 +168,19 @@ export default function Main() {
                     value = {defaultText}
                     onFocus={() => EnterText('')}
                     onChangeText={(text) => EnterText(text)}
-                    onSubmitEditing = {() => confirmFeatures(defaultText)}
+                    onSubmitEditing = {() => addFeature(defaultText)}
                     >
                   </TextInput>
+
                   <View style = {{flexDirection:'row', justifyContent:'space-evenly'}}>
-                    <TouchableOpacity style = {styles.confirmButton} onPress={() => confirmFeatures(defaultText)}>
+                    <TouchableOpacity style = {styles.confirmButton} onPress={() => addFeature(defaultText)}>
                         <Text style = {styles.textStyle}>    Add  Feature    </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style = {styles.removeFeatureButton} onPress={()=> removeFeature()}>
+                    <TouchableOpacity style = {styles.removeFeatureButton} onPress={() => removeFeature()}>
                         <Text style = {styles.textStyle}>    Remove Feature    </Text>
                     </TouchableOpacity>
-                    {/* <Button 
-                      style = {styles.ConfirmButton}
-                      title="Add Feature" 
-                      color ='darkgreen'
-                      onPress={() => confirmFeatures(defaultText)}
-                    /> */}
-                    {/* <Button
-                      title="Remove Feature"
-                      color='coral'
-                      onPress={() => removeFeature()}
-                    /> */}
                   </View>
+
                   <FlatList
                       data = {selectedFeatures}
                       renderItem={({ item }) => (
@@ -193,25 +198,21 @@ export default function Main() {
                   />
                   
                   <View style = {styles.confirmSelectionsButton}>
-                    <TouchableOpacity style = {styles.confirmButton}>
+                    <TouchableOpacity style = {styles.confirmButton} onPress={() => generateRequestFromFiles(seturl, selectedFiles)}>
                       <Text style = {styles.textStyle}> Confirm Selections </Text>
                     </TouchableOpacity>
-                    {/* <Button style = {styles.button}
-                      title="Confirm Selections"
-                      color='darkgreen'
-                      
-                    /> */}
                   </View>
-                  </View>
-                  <View style = {styles.generateDownloadAppContainer}> 
-                    {url ? (
-                      <TouchableOpacity style = {styles.generateButton} onPress={() => Linking.openURL(url)}>
-                        <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
-                      </TouchableOpacity>
-                    ) : (
-                      <Text>Loading...</Text>
-                    )}
-                  </View>
+
+                </View>
+                <View style = {styles.generateDownloadAppContainer}> 
+                  {url ? (
+                    <TouchableOpacity style = {styles.generateButton} onPress={() => Linking.openURL(url)}>
+                      <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <Text>Confirm Selections to Download App...</Text>
+                  )}
+                </View>
               
               <View style = {styles.displaySelectionContainer}>
               </View>
@@ -222,8 +223,19 @@ export default function Main() {
       );
     }
   
+function generateRequestFromFiles(seturl, fileList) {
+  console.log(fileList)
+  
+    Firebase(fileList).then((res) => {
+      seturl(res);
+  }, []);
+}
+
   
 const styles = StyleSheet.create({
+    bullet: {
+        paddingTop: 25
+    },
     confirmButton: {
         backgroundColor: "darkgreen",
         borderRadius: 10,
@@ -321,9 +333,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         position: 'absolute',
         bottom: "3%",
-        left: "125%",
+        left: "175%",
         width: '50%',
         height: '10%',
       },
     
 });
+
+
+
