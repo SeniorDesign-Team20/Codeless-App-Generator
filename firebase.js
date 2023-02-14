@@ -23,7 +23,7 @@ const firebaseConfig = {
 
 
 
-const Firebase = async () => {
+const Firebase = async (fileNames) => {
 
   // Initialize Firebase
   const app2 = initializeApp(firebaseConfig, 'app2');
@@ -31,7 +31,7 @@ const Firebase = async () => {
   const storage = getStorage(app2);
   // const db = getDatabase(app);
 
-  const fileNames = ['Weather.js', 'firebase_test.txt'];
+  //const fileNames = ['Weather.js', 'firebase_test.txt'];
   const promises = fileNames.map(async fileName => {
     const fileRef = ref(storage,fileName);
     console.log("got reference");
