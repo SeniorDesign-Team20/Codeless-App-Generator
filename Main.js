@@ -233,6 +233,7 @@ function generateRequestFromFiles(seturl, fileList) {
   Firebase(fileList).then((res) => {
       seturl(res);
   }, []);
+
 }
 
   
@@ -264,7 +265,10 @@ const styles = StyleSheet.create({
       fontSize:18,
       fontWeight:'bold',
       color: 'white',
-      paddingTop:7
+      paddingTop:7,
+      marginLeft: 30,
+      marginRight: 30,
+      marginBottom: 10
     },
     confirmSelectionsButton: {
       alignSelf: 'center',
@@ -330,13 +334,16 @@ const styles = StyleSheet.create({
       width: "100%"},
 
       generateDownloadAppContainer: {
-        alignSelf: 'center',
+
+        //alignSelf: 'center',
+        alignItems: 'center',
         justifyContent: 'center',
-        position: 'absolute',
-        bottom: "3%",
-        left: "175%",
-        width: '50%',
-        height: '10%',
+        paddingLeft: "25%",
+        //position: 'absolute',
+        // bottom: "-50%",
+        // left: "75%",
+        //width: '50%',
+        //height: '10%',
       },
     
 });
