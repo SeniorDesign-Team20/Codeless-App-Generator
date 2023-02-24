@@ -10,9 +10,6 @@ export default function Main() {
     "Chat Forum": "ChatForum.js",
     "Weather": "Weather.js",
   };
-  
-
-
 
     const [feature1, set1] = useState(false);
     const [feature2, set2] = useState(false);
@@ -137,81 +134,87 @@ export default function Main() {
         <View style={styles.container}>
             <View style = {styles.contentContainer}>
               <View syle={styles.chooseFeaturesContainer}>
-                  <Checkbox
-                    onPress = {() =>{setFeat1(feature1)}}
-                    title="Google Sign-In"
-                    isChecked={feature1}
-                  />
-                  <Checkbox
-                    onPress = {() => setFeat2(feature2)}
-                    title="Chat Forum"
-                    isChecked={feature2}
-                  />
-                  <Checkbox
-                    onPress={() => setFeat3(feature3)}
-                    title="Weather"
-                    isChecked={feature3}
-                  />
-                  <Checkbox
-                    onPress={() => setFeat4(feature4)}
-                    title="Maps"
-                    isChecked={feature4}
-                  />
-                  <Checkbox
-                    onPress={() => setFeat5(feature5)}
-                    title="Payments Platform"
-                    isChecked={feature5}
-                  />    
-                  <TextInput
-                    style = {styles.enter}
-                    placeholder ='Enter a feature here ... '
-                    value = {defaultText}
-                    onFocus={() => EnterText('')}
-                    onChangeText={(text) => EnterText(text)}
-                    onSubmitEditing = {() => addFeature(defaultText)}
-                    >
-                  </TextInput>
+                    <Checkbox
+                      onPress = {() =>{setFeat1(feature1)}}
+                      title="Google Sign-In"
+                      isChecked={feature1}
+                    />
+                    <Checkbox
+                      onPress = {() => setFeat2(feature2)}
+                      title="Chat Forum"
+                      isChecked={feature2}
+                    />
+                    <Checkbox
+                      onPress={() => setFeat3(feature3)}
+                      title="Weather"
+                      isChecked={feature3}
+                    />
+                    <Checkbox
+                      onPress={() => setFeat4(feature4)}
+                      title="Maps"
+                      isChecked={feature4}
+                    />
+                    <Checkbox
+                      onPress={() => setFeat5(feature5)}
+                      title="Payments Platform"
+                      isChecked={feature5}
+                    />    
+                    <TextInput
+                      style = {styles.enter}
+                      placeholder ='Enter a feature here ... '
+                      value = {defaultText}
+                      onFocus={() => EnterText('')}
+                      onChangeText={(text) => EnterText(text)}
+                      onSubmitEditing = {() => addFeature(defaultText)}
+                      >
+                    </TextInput>
 
-                  <View style = {{flexDirection:'row', justifyContent:'space-evenly'}}>
-                    <TouchableOpacity style = {styles.confirmButton} onPress={() => addFeature(defaultText)}>
-                        <Text style = {styles.textStyle}>    Add  Feature    </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style = {styles.removeFeatureButton} onPress={() => removeFeature()}>
-                        <Text style = {styles.textStyle}>    Remove Feature    </Text>
-                    </TouchableOpacity>
-                  </View>
+                    <View style = {{flexDirection:'row', justifyContent:'space-evenly'}}>
+                      <TouchableOpacity style = {styles.confirmButton} onPress={() => addFeature(defaultText)}>
+                          <Text style = {styles.textStyle}>    Add  Feature    </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style = {styles.removeFeatureButton} onPress={() => removeFeature()}>
+                          <Text style = {styles.textStyle}>    Remove Feature    </Text>
+                      </TouchableOpacity>
+                    </View>
 
-                  <FlatList
-                      data = {selectedFeatures}
-                      renderItem={({ item }) => (
-                        <View style={styles.bullet}>
-                          <Text style={
-                            { fontSize: 18,
-                              color: "#000",
-                              marginLeft: 15,
-                              fontWeight: "600",
-                            } 
-                        }>&#8226; {item}</Text>
-                        </View>
-                      )}
-                      keyExtractor={(item, index) => index.toString()}
-                  />
-                  
-                  <View style = {styles.confirmSelectionsButton}>
-                    <TouchableOpacity style = {styles.confirmButton} onPress={() => generateRequestFromFiles(seturl, selectedFiles)}>
-                      <Text style = {styles.textStyle}> Confirm Selections </Text>
-                    </TouchableOpacity>
-                  </View>
+                    <FlatList
+                        data = {selectedFeatures}
+                        renderItem={({ item }) => (
+                          <View style={styles.bullet}>
+                            <Text style={
+                              { fontSize: 18,
+                                color: "#000",
+                                marginLeft: 15,
+                                fontWeight: "600",
+                              } 
+                          }>&#8226; {item}</Text>
+                          </View>
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+                    
+                    <View style = {styles.confirmSelectionsButton}>
+                      <TouchableOpacity 
+                          style = {styles.confirmButton} 
+                          onPress={() => generateRequestFromFiles(seturl, selectedFiles)}
+                      >
+                        <Text style = {styles.textStyle}> Confirm Selections </Text>
+                      </TouchableOpacity>
+                    </View>
 
                 </View>
                 <View style = {styles.generateDownloadAppContainer}> 
-                  {url ? (
-                    <TouchableOpacity style = {styles.generateButton} onPress={() => Linking.openURL(url)}>
-                      <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
-                    </TouchableOpacity>
-                  ) : (
-                    <Text>Confirm Selections to Download App...</Text>
-                  )}
+                      {url ? (
+                        <TouchableOpacity 
+                            style = {styles.generateButton} 
+                            onPress={() => Linking.openURL(url)}
+                        >
+                          <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
+                        </TouchableOpacity>
+                      ) : (
+                        <Text>Confirm Selections to Download App...</Text>
+                      )}
                 </View>
               
               <View style = {styles.displaySelectionContainer}>
@@ -225,8 +228,9 @@ export default function Main() {
   
 function generateRequestFromFiles(seturl, fileList) {
   console.log(fileList)
-  
-    Firebase(fileList).then((res) => {
+  // Add in welcome note to all apps
+  fileList = [...fileList, "Welcome.pdf"]
+  Firebase(fileList).then((res) => {
       seturl(res);
   }, []);
 }
@@ -265,9 +269,7 @@ const styles = StyleSheet.create({
     confirmSelectionsButton: {
       alignSelf: 'center',
       justifyContent: 'center',
-      position: 'absolute',
       bottom: "3%",
-      left: "25%",
       width: '50%',
       height: '10%',
     },
@@ -284,17 +286,16 @@ const styles = StyleSheet.create({
         width: "100%"
       },
       contentContainer: {
-        flex: 5,
-        flexDirection: "row",
+        flex: 1,
+        flexDirection: "row"
       },
     chooseFeaturesContainer: {
-      flex: 1,
-      backgroundColor: "#fff",
-      justifyContent: "flex-start",
-      alignItems: "space-between",
-      flexDirection: "row",
-      width: "50%",
-      flexWrap: "wrap",
+      // flex: 1,
+      // backgroundColor: "#fff",
+      // justifyContent: "flex-start",
+      // alignItems: "space-evenly",
+      // //flexDirection: "column",
+      // flexWrap: "wrap",
       
     },
     titleStyle: {
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
       marginTop:50,
       borderBottomWidth: 1,
       borderBottomColor: 'black',
-      width: 750},
+      width: "100%"},
 
       generateDownloadAppContainer: {
         alignSelf: 'center',
