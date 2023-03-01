@@ -24,13 +24,15 @@ async function modifyFile(fileList) {
     const storage = getStorage(modifyapp);
 
     // The name of the JSON file to be modified
-    const fileName = 'selected_features.js';  
+    const fileDirectory = 'DefaultSelectFeatures/selected_features.js';  
+    const fileName = 'selected_features.js'
     
-    const fileRef = ref(storage,fileName);
+    const defaultFileRef = ref(storage,fileDirectory);
+    const updatedFileRef = ref(storage,fileName);
     console.log("got reference");
 
-    const contentpromises = async (fileName) => {
-        const url = await getDownloadURL(fileRef);
+    const contentpromises = async (fileDirectory) => {
+        const url = await getDownloadURL(defaultFileRef);
         console.log("got download URL");
         console.log(url);
     
@@ -62,7 +64,7 @@ async function modifyFile(fileList) {
         console.log(fileContent);
         const encoder = new TextEncoder();
         const fileData = encoder.encode(fileContent);
-        await uploadBytes(fileRef, fileData);
+        await uploadBytes(updatedFileRef, fileData);
         console.log(`Successfully modified ${fileName}`);
     })
     .catch(error => {
