@@ -227,15 +227,18 @@ export default function Main() {
       );
     }
   
-function generateRequestFromFiles(seturl, fileList) {
+async function generateRequestFromFiles(seturl, fileList) {
   console.log(fileList);
   console.log('editing file...');
-  modifyFile();
+  await modifyFile(fileList);
   // Add in welcome note to all apps
   fileList = [...fileList, "Welcome.pdf"]
-  Firebase(fileList).then((res) => {
+  fileList = [...fileList, "selected_features.js"]
+  await Firebase(fileList).then((res) => {
       seturl(res);
   }, []);
+
+  
 
 }
 

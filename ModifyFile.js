@@ -3,6 +3,7 @@ import 'firebase/storage';
 import { initializeApp } from "firebase/app";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import axios from 'axios'
+import setSelectedFeatures from './SetSelectedFeatures';
 
 const firebaseConfig = {
     apiKey: "${{ secrets.FIREBASEAPIKEY }}",
@@ -14,13 +15,10 @@ const firebaseConfig = {
     measurementId: "${{ secrets.MEASURMENTID }}"
   };
 
-
-
-
 // Modify the file's boolean variables
 // Modify the file's boolean variables
-async function modifyFile() {
-
+async function modifyFile(fileList) {
+    const featureChoices = setSelectedFeatures(fileList)
     const modifyapp = initializeApp(firebaseConfig);
 
     const storage = getStorage(modifyapp);
@@ -31,7 +29,7 @@ async function modifyFile() {
     const fileRef = ref(storage,fileName);
     console.log("got reference");
 
-    const contentpromises = async fileName => {
+    const contentpromises = async (fileName) => {
         const url = await getDownloadURL(fileRef);
         console.log("got download URL");
         console.log(url);
@@ -50,16 +48,21 @@ async function modifyFile() {
       };
 
     //   let fileContents = await response.text();
-    contentpromises(fileName)
-    .then(fileContent => {
+    await contentpromises(fileName)
+    .then(async fileContent => {
         console.log('original file contents:');
         console.log(fileContent);
-        fileContent = fileContent.replace('export const include_help       = false;', 'export const include_help       = true;');
+        for (const element in featureChoices) {
+          const featureName = element.replace(/\.js$/, "");
+          if (featureChoices[element]){
+            fileContent = fileContent.replace(`export const include_${featureName} = false`, `export const include_${featureName} = ${featureChoices[element]};`);
+          }
+        }
         console.log('new file contents:');
         console.log(fileContent);
         const encoder = new TextEncoder();
         const fileData = encoder.encode(fileContent);
-        uploadBytes(fileRef, fileData);
+        await uploadBytes(fileRef, fileData);
         console.log(`Successfully modified ${fileName}`);
     })
     .catch(error => {
