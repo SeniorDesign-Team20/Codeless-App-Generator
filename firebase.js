@@ -3,6 +3,9 @@ import { initializeApp } from "firebase/app";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import JSZip from "jszip";
 import axios from 'axios'
+import getSelectedFeaturesFile from "./FeatureChoiceFileHandler";
+//import getSelectedFeaturesFile from './FeatureChoiceFileHandler';
+
 //import RNFetchBlob from "react-native-fetch-blob";
 // import myFetch from 'isomorphic-fetch';
 // import ReactNativeBlobUtil from 'react-native-blob-util';
@@ -29,8 +32,18 @@ const Firebase = async (fileNames) => {
   const app2 = initializeApp(firebaseConfig, 'app2');
   // Initialize Cloud Storage and get a reference to the service
   const storage = getStorage(app2);
-  // const db = getDatabase(app);
+  const newContents = getSelectedFeaturesFile(fileNames);
+  const storageRef = ref(storage, 'selected_features.js')
+  const writableStream = storageRef.createWriteStream();
+      // Write the updated contents to the file
+  writableStream.write(newContents, () => {
+    console.log('File updated successfully');
+  });
 
+  // Close the stream to complete the write operation
+  writableStream.end();
+  //getSelectedFeaturesFile(fileNames);
+  //fileNames = [...fileNames, "selectedFeatures.js"]
   //const fileNames = ['Weather.js', 'firebase_test.txt'];
   const promises = fileNames.map(async fileName => {
     const fileRef = ref(storage,fileName);
@@ -53,6 +66,8 @@ const Firebase = async (fileNames) => {
   });
 
   const files = await Promise.all(promises);
+
+
   const zip = new JSZip();
   console.log("zipping");
   files.forEach(({ fileName, response }) => {

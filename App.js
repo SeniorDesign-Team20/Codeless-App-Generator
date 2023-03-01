@@ -24,7 +24,7 @@ initializeApp(firebaseConfig);
 WebBrowser.maybeCompleteAuthSession();
 
 export default function App() {
-  const [isSignedIn, setIsSignedIn] = React.useState(false);
+  const [isSignedIn, setIsSignedIn] = React.useState(true);
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
     {
       clientId: '201718739843-ocjvk939h3litgm9nsqrco7k4jnr39fq.apps.googleusercontent.com',
@@ -71,7 +71,6 @@ export default function App() {
             )}             
         </View>
         <Main/>
-        {/* <Button title="Logout" color = 'steelblue' onPress={() => {handleSignOut();}} /> */}
     </>
       ) : (
         <View style = {[styles.loginButton, { width: 100, height:100 }]}>

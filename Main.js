@@ -228,6 +228,7 @@ export default function Main() {
   
 function generateRequestFromFiles(seturl, fileList) {
   console.log(fileList)
+  
   // Add in welcome note to all apps
   fileList = [...fileList, "Welcome.pdf"]
   Firebase(fileList).then((res) => {
