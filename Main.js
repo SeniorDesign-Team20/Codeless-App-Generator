@@ -2,6 +2,7 @@ import { StyleSheet, View, Alert, FlatList, Button, Text, TextInput, TouchableOp
 import { useState, useEffect } from "react";
 import Checkbox from "./CheckBox";
 import Firebase from "./firebase";
+import modifyFile from "./ModifyFile"
 
 export default function Main() {
     
@@ -227,7 +228,9 @@ export default function Main() {
     }
   
 function generateRequestFromFiles(seturl, fileList) {
-  console.log(fileList)
+  console.log(fileList);
+  console.log('editing file...');
+  modifyFile();
   // Add in welcome note to all apps
   fileList = [...fileList, "Welcome.pdf"]
   Firebase(fileList).then((res) => {

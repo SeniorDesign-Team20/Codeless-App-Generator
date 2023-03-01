@@ -32,7 +32,7 @@ const Firebase = async (fileNames) => {
   // const db = getDatabase(app);
 
   //const fileNames = ['Weather.js', 'firebase_test.txt'];
-  const promises = fileNames.map(async fileName => {
+    const promises = fileNames.map(async fileName => {
     const fileRef = ref(storage,fileName);
     console.log("got reference");
     const url = await getDownloadURL(fileRef);
