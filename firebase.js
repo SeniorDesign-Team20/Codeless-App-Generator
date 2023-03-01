@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { initializeApp, firebase } from "firebase/app";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import JSZip from "jszip";
 import axios from 'axios'
@@ -33,24 +33,25 @@ const Firebase = async (fileNames) => {
 
   //const fileNames = ['Weather.js', 'firebase_test.txt'];
   const promises = fileNames.map(async fileName => {
-    const fileRef = ref(storage,fileName);
-    console.log("got reference");
-    const url = await getDownloadURL(fileRef);
-    console.log("got download URL");
-    console.log(url);
+      
+      const fileRef = ref(storage,fileName);
+      console.log("got reference");
 
-  //Trying axios - best so far, can fetch without the token in url
+      const url = await getDownloadURL(fileRef);
+      console.log("got download URL");
+      console.log(url);
 
-  return axios.get(url,{
-    headers: {
+      return axios.get(url,{
+        headers: {
+        }
+      }).then(response => {
+        return {fileName, response: response.data}
+      })
+      .catch(error => {
+        console.error(error);
+      })
     }
-  }).then(response => {
-    return {fileName, response: response.data}
-  })
-  .catch(error => {
-    console.error(error);
-  })
-  });
+  );
 
   const files = await Promise.all(promises);
   const zip = new JSZip();
@@ -65,6 +66,13 @@ const Firebase = async (fileNames) => {
   await uploadBytes(zipRef, zipBlob);
   console.log('Uploaded a blob or file!');
   const downloadURL = await getDownloadURL(zipRef);
+  
+  // Replace selected features file
+  // const selFeaturesFileRef = ref(storage, 'selected_features.js/');
+  // // uploads file
+  // await uploadBytes(selFeaturesFileRef, './selected_features.js');
+  // console.log('Finished reset selected features file');
+
   return downloadURL;
 
 }
