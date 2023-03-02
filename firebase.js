@@ -31,7 +31,7 @@ const Firebase = async (fileNames) => {
   const storage = getStorage(app2);
   // const db = getDatabase(app);
 
-  //const fileNames = ['Weather.js', 'firebase_test.txt'];
+  
   const promises = fileNames.map(async fileName => {
       
       const fileRef = ref(storage,fileName);
@@ -66,7 +66,7 @@ const Firebase = async (fileNames) => {
   await uploadBytes(zipRef, zipBlob);
   console.log('Uploaded a blob or file!');
   const downloadURL = await getDownloadURL(zipRef);
-  
+  //gs://codeless-app-generator.appspot.com/GeneratedApp/README.md
   // Replace selected features file
   // const selFeaturesFileRef = ref(storage, 'selected_features.js/');
   // // uploads file

@@ -6,11 +6,13 @@ import modifyFile from "./ModifyFile"
 
 export default function Main() {
     
-  const fileNameMappings = {
-    "Google Sign-In": "GoogleSignIn.js",
-    "Chat Forum": "ChatForum.js",
-    "Weather": "Weather.js",
-  };
+    const fileNameMappings = {
+      "Google Sign-In": "Google_Login",
+      "Weather": "Weather",
+      "Calender" : "Calender",
+      "People Page": "People",
+      "FAQ Page": "FAQs.js"
+    };
 
     const [feature1, set1] = useState(false);
     const [feature2, set2] = useState(false);
@@ -44,11 +46,11 @@ export default function Main() {
       set2(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Chat Forum"])
-        setFiles(arr => [... arr, fileNameMappings["Chat Forum"]])
+        setFeatures(arr => [...arr, "Weather"])
+        setFiles(arr => [... arr, fileNameMappings["Weather"]])
       }
       else{
-        const index = selectedFeatures.indexOf("Chat Forum")
+        const index = selectedFeatures.indexOf("Weather")
         selectedFeatures.splice(index, 1)
         selectedFiles.splice(index,1)
       }
@@ -59,11 +61,11 @@ export default function Main() {
       set3(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Weather"])
-        setFiles(arr => [...arr, fileNameMappings["Weather"]])
+        setFeatures(arr => [...arr, "Calender"])
+        setFiles(arr => [...arr, fileNameMappings["Calender"]])
       }
       else{
-        const index = selectedFeatures.indexOf("Weather")
+        const index = selectedFeatures.indexOf("Calender")
         selectedFeatures.splice(index, 1)
         selectedFiles.splice(index,1)
       }
@@ -74,11 +76,11 @@ export default function Main() {
       set4(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Maps"])
-        setFiles(arr => [...arr, fileNameMappings["Maps"]])
+        setFeatures(arr => [...arr, "People Page"])
+        setFiles(arr => [...arr, fileNameMappings["People Page"]])
       }
       else{
-        const index = selectedFeatures.indexOf("Maps")
+        const index = selectedFeatures.indexOf("People Page")
         selectedFeatures.splice(index, 1)
         selectedFiles.splice(index,1)
       }
@@ -89,11 +91,11 @@ export default function Main() {
       set5(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Payments Platform"])
-        setFiles(arr => [...arr, fileNameMappings["Payments Platform"]])
+        setFeatures(arr => [...arr, "FAQ Page"])
+        setFiles(arr => [...arr, fileNameMappings["FAQ Page"]])
       }
       else{
-        const index = selectedFeatures.indexOf("Payments Platform")
+        const index = selectedFeatures.indexOf("FAQ Page")
         selectedFeatures.splice(index, 1)
         selectedFiles.splice(index, 1)
       }
@@ -115,13 +117,13 @@ export default function Main() {
         {
           case "Google Sign-In":
             set1(false)
-          case "Chat Forum":
-            set2(false)
           case "Weather":
+            set2(false)
+          case "Calender":
             set3(false)
-          case "Maps":
+          case "People Page":
             set4(false)
-          case "Payments Platform":
+          case "FAQ Page":
             set5(false)
         }
         setFeatures(arr => arr.slice(0, -1))
@@ -142,22 +144,22 @@ export default function Main() {
                     />
                     <Checkbox
                       onPress = {() => setFeat2(feature2)}
-                      title="Chat Forum"
+                      title="Weather"
                       isChecked={feature2}
                     />
                     <Checkbox
                       onPress={() => setFeat3(feature3)}
-                      title="Weather"
+                      title="Calender"
                       isChecked={feature3}
                     />
                     <Checkbox
                       onPress={() => setFeat4(feature4)}
-                      title="Maps"
+                      title="People Page"
                       isChecked={feature4}
                     />
                     <Checkbox
                       onPress={() => setFeat5(feature5)}
-                      title="Payments Platform"
+                      title="FAQ Page"
                       isChecked={feature5}
                     />    
                     <TextInput
