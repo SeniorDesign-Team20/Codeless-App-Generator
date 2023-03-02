@@ -1,11 +1,19 @@
 export default function setSelectedFeatures(featureFiles) {
-    
+    // const fileNameMappings = {
+    //     "Google Sign-In": "Google_Login",
+    //     "Weather": "Weather",
+    //     "Calender" : "Calender",
+    //     "People Page": "People",
+    //     "FAQ Page": "FAQs.js"
+    //   };
 
     const selectedFeatures = 
     {
-        "GoogleSignIn.js": false,
-        "ChatForum.js": false,
-        "Weather.js": false
+        "googleLogin": false,
+        "weather": false,
+        "calendar": false,
+        "people": false,
+        "faq":false
     };
 
     //Loop through requested features to assign booleans

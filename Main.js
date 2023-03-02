@@ -6,11 +6,13 @@ import modifyFile from "./ModifyFile"
 
 export default function Main() {
     
-  const fileNameMappings = {
-    "Google Sign-In": "GoogleSignIn.js",
-    "Chat Forum": "ChatForum.js",
-    "Weather": "Weather.js",
-  };
+    const fileNameMappings = {
+      "Google Sign-In": "Google_Login",
+      "Weather": "Weather",
+      "Calendar" : "Calendar",
+      "People Page": "People",
+      "FAQ Page": "FAQs.js"
+    };
 
     const [feature1, set1] = useState(false);
     const [feature2, set2] = useState(false);
@@ -19,9 +21,15 @@ export default function Main() {
     const [feature5, set5] = useState(false);
     
     const [selectedFeatures, setFeatures] = useState([]);
+    //const [test, setFeaturesToExclude] = useState([]);
     const [selectedFiles, setFiles] = useState([]);
+    const [selectedBools, setBools] = useState([]);
     const [url, seturl] = useState('');
-
+    // "googleLogin": false,
+    // "weather": false,
+    // "calendar": false,
+    // "people": false,
+    // "faq":false
     //newFunction(seturl, selectedFiles);
     
     console.log(url);
@@ -31,6 +39,7 @@ export default function Main() {
       {
         setFeatures(arr => [...arr, "Google Sign-In"])
         setFiles(arr => [... arr, fileNameMappings["Google Sign-In"]])
+        setBools(arr => [... arr, "googleLogin"])
       }
       else{
         const index = selectedFeatures.indexOf("Google Sign-In")
@@ -44,11 +53,13 @@ export default function Main() {
       set2(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Chat Forum"])
-        setFiles(arr => [... arr, fileNameMappings["Chat Forum"]])
+        setFeatures(arr => [...arr, "Weather"])
+        setFiles(arr => [... arr, fileNameMappings["Weather"]])
+        setBools(arr => [... arr, "weather"])
+
       }
       else{
-        const index = selectedFeatures.indexOf("Chat Forum")
+        const index = selectedFeatures.indexOf("Weather")
         selectedFeatures.splice(index, 1)
         selectedFiles.splice(index,1)
       }
@@ -59,11 +70,12 @@ export default function Main() {
       set3(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Weather"])
-        setFiles(arr => [...arr, fileNameMappings["Weather"]])
+        setFeatures(arr => [...arr, "Calendar"])
+        setFiles(arr => [...arr, fileNameMappings["Calendar"]])
+        setBools(arr => [... arr, "calendar"])
       }
       else{
-        const index = selectedFeatures.indexOf("Weather")
+        const index = selectedFeatures.indexOf("Calendar")
         selectedFeatures.splice(index, 1)
         selectedFiles.splice(index,1)
       }
@@ -74,11 +86,12 @@ export default function Main() {
       set4(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Maps"])
-        setFiles(arr => [...arr, fileNameMappings["Maps"]])
+        setFeatures(arr => [...arr, "People Page"])
+        setFiles(arr => [...arr, fileNameMappings["People Page"]])
+        setBools(arr => [... arr, "people"])
       }
       else{
-        const index = selectedFeatures.indexOf("Maps")
+        const index = selectedFeatures.indexOf("People Page")
         selectedFeatures.splice(index, 1)
         selectedFiles.splice(index,1)
       }
@@ -89,11 +102,12 @@ export default function Main() {
       set5(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Payments Platform"])
-        setFiles(arr => [...arr, fileNameMappings["Payments Platform"]])
+        setFeatures(arr => [...arr, "FAQ Page"])
+        setFiles(arr => [...arr, fileNameMappings["FAQ Page"]])
+        setBools(arr => [... arr, "faq"])
       }
       else{
-        const index = selectedFeatures.indexOf("Payments Platform")
+        const index = selectedFeatures.indexOf("FAQ Page")
         selectedFeatures.splice(index, 1)
         selectedFiles.splice(index, 1)
       }
@@ -115,16 +129,30 @@ export default function Main() {
         {
           case "Google Sign-In":
             set1(false)
-          case "Chat Forum":
-            set2(false)
           case "Weather":
+            set2(false)
+          case "Calendar":
             set3(false)
-          case "Maps":
+          case "People Page":
             set4(false)
-          case "Payments Platform":
+          case "FAQ Page":
             set5(false)
         }
         setFeatures(arr => arr.slice(0, -1))
+        setFiles(arr => arr.slice(0, -1))
+        setBools(arr => arr.slice(0, -1))
+    }
+
+    const getFeaturesToExclude = () => {
+      const featuresToExclude = [];
+      for (const element in fileNameMappings){
+        if (!selectedFeatures.includes(element)){
+          featuresToExclude.push(fileNameMappings[element])
+        }
+      }
+      console.log('Excluded Features:');
+      console.log(featuresToExclude);
+      return featuresToExclude;
     }
 
     const redirect = (val) =>(
@@ -142,22 +170,22 @@ export default function Main() {
                     />
                     <Checkbox
                       onPress = {() => setFeat2(feature2)}
-                      title="Chat Forum"
+                      title="Weather"
                       isChecked={feature2}
                     />
                     <Checkbox
                       onPress={() => setFeat3(feature3)}
-                      title="Weather"
+                      title="Calendar"
                       isChecked={feature3}
                     />
                     <Checkbox
                       onPress={() => setFeat4(feature4)}
-                      title="Maps"
+                      title="People Page"
                       isChecked={feature4}
                     />
                     <Checkbox
                       onPress={() => setFeat5(feature5)}
-                      title="Payments Platform"
+                      title="FAQ Page"
                       isChecked={feature5}
                     />    
                     <TextInput
@@ -198,7 +226,7 @@ export default function Main() {
                     <View style = {styles.confirmSelectionsButton}>
                       <TouchableOpacity 
                           style = {styles.confirmButton} 
-                          onPress={() => generateRequestFromFiles(seturl, selectedFiles)}
+                          onPress={() => generateRequestFromFiles(seturl, selectedBools, getFeaturesToExclude())}
                       >
                         <Text style = {styles.textStyle}> Confirm Selections </Text>
                       </TouchableOpacity>
@@ -227,14 +255,15 @@ export default function Main() {
       );
     }
   
-async function generateRequestFromFiles(seturl, fileList) {
+async function generateRequestFromFiles(seturl, fileList, excludedFeatures) {
   console.log(fileList);
   console.log('editing file...');
   await modifyFile(fileList);
+
   // Add in welcome note to all apps
-  fileList = [...fileList, "Welcome.pdf"]
-  fileList = [...fileList, "selected_features.js"]
-  await Firebase(fileList).then((res) => {
+  // fileList = [...fileList, "Welcome.pdf"]
+  // fileList = [...fileList, "selected_features.js"]
+  await Firebase('GeneratedApp', []).then((res) => {
       seturl(res);
   }, []);
 
