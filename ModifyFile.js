@@ -24,8 +24,8 @@ async function modifyFile(fileList) {
     const storage = getStorage(modifyapp);
 
     // The name of the JSON file to be modified
-    const fileDirectory = 'DefaultSelectFeatures/selected_features.js';  
-    const fileName = 'selected_features.js'
+    const fileDirectory = 'DefaultSelectFeatures/selectedFeatures.js';  
+    const fileName = 'GeneratedApp/selectedFeatures.js'
     
     const defaultFileRef = ref(storage,fileDirectory);
     const updatedFileRef = ref(storage,fileName);
@@ -55,9 +55,9 @@ async function modifyFile(fileList) {
         console.log('original file contents:');
         console.log(fileContent);
         for (const element in featureChoices) {
-          const featureName = element.replace(/\.js$/, "");
+          //const featureName = element.replace(/\.js$/, "");
           if (featureChoices[element]){
-            fileContent = fileContent.replace(`export const include_${featureName} = false`, `export const include_${featureName} = ${featureChoices[element]};`);
+            fileContent = fileContent.replace(`export const include_${element} = false`, `export const include_${element} = ${featureChoices[element]};`);
           }
         }
         console.log('new file contents:');
