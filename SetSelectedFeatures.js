@@ -21,6 +21,10 @@ export default function setSelectedFeatures(featureFiles) {
         if (featureFiles.includes(element)) {
             selectedFeatures[element] = true;
         }
+        if (featureFiles.includes("FAQs"))
+        {
+            selectedFeatures["faq"] = true;
+        }
     }
 
     return selectedFeatures;
