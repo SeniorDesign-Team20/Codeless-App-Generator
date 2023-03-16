@@ -59,6 +59,7 @@ async function modifyFile(fileList) {
           if (featureChoices[element]){
             fileContent = fileContent.replace(`export const include_${element} = false`, `export const include_${element} = ${featureChoices[element]};`);
           }
+
         }
         console.log('new file contents:');
         console.log(fileContent);

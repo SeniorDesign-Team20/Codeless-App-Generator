@@ -11,7 +11,7 @@ export default function Main() {
       "Weather": "Weather",
       "Calendar" : "Calendar",
       "People Page": "People",
-      "FAQ Page": "FAQs.js"
+      "FAQ Page": "FAQs"
     };
 
     const [feature1, set1] = useState(false);
