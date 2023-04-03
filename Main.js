@@ -3,17 +3,31 @@ import { useState, useEffect } from "react";
 import Checkbox from "./CheckBox";
 import Firebase from "./firebase";
 import modifyFile from "./ModifyFile"
+import processText from "./NLP";
 
 export default function Main() {
     
     const fileNameMappings = {
-      "Google Sign-In": "Google_Login",
+      "Google Sign-in": "Google_Login",
       "Weather": "Weather",
       "Calendar" : "Calendar",
       "People Page": "People",
       "FAQ Page": "FAQs"
     };
 
+    const nlpFeatures = ["About Page", "Activity Feed", "Application Page", "Calculator", "Calendar", "Chatbot",
+                         "Contact Form", "Discussion Forum", "FAQ Page", "File Upload", "Google Sign-in", "Job Openings", 
+                         "Map", "Menu", "Online Store", "People Page", "Photobooth", "Privacy Policy", "QR Code Scanner", 
+                         "Reviews", "Weather"];
+
+    const boolMappings = {
+      "Google_Login":"googleLogin",
+      "Weather": "weather",
+      "Calendar": "calendar",
+      "People": "people",
+      "FAQs":"faq"
+  };
+    
     const [feature1, set1] = useState(false);
     const [feature2, set2] = useState(false);
     const [feature3, set3] = useState(false);
@@ -25,24 +39,23 @@ export default function Main() {
     const [selectedFiles, setFiles] = useState([]);
     const [selectedBools, setBools] = useState([]);
     const [url, seturl] = useState('');
-    // "googleLogin": false,
-    // "weather": false,
-    // "calendar": false,
-    // "people": false,
-    // "faq":false
-    //newFunction(seturl, selectedFiles);
+    const [userRequests, setUserRequests] = useState([]);
+    const [translatedRequests, setTranslatedRequests] = useState([]);
     
     console.log(url);
+
+    const [predictions, setPredictions] = useState([]);
+
     const setFeat1 = (feat) => {
       set1(!feat);
       if (!feat)
       {
-        setFeatures(arr => [...arr, "Google Sign-In"])
-        setFiles(arr => [... arr, fileNameMappings["Google Sign-In"]])
+        setFeatures(arr => [...arr, "Google Sign-in"])
+        setFiles(arr => [... arr, fileNameMappings["Google Sign-in"]])
         setBools(arr => [... arr, "googleLogin"])
       }
       else{
-        const index = selectedFeatures.indexOf("Google Sign-In")
+        const index = selectedFeatures.indexOf("Google Sign-in")
         selectedFeatures.splice(index, 1)
         selectedFiles.splice(index, 1)
       }
@@ -121,13 +134,14 @@ export default function Main() {
         return  
       redirect('')
       setFeatures(arr => [...arr, inputText])
+      setUserRequests(arr => [...arr, inputText])
     }
 
     const removeFeature = () => {
         let featureToRemove = selectedFeatures.slice(-1)[0] 
         switch (featureToRemove)
         {
-          case "Google Sign-In":
+          case "Google Sign-in":
             set1(false)
           case "Weather":
             set2(false)
@@ -154,7 +168,7 @@ export default function Main() {
       console.log(featuresToExclude);
       return featuresToExclude;
     }
-
+    
     const redirect = (val) =>(
       EnterText(val)
     )
@@ -165,7 +179,7 @@ export default function Main() {
               <View syle={styles.chooseFeaturesContainer}>
                     <Checkbox
                       onPress = {() =>{setFeat1(feature1)}}
-                      title="Google Sign-In"
+                      title="Google Sign-in"
                       isChecked={feature1}
                     />
                     <Checkbox
@@ -190,7 +204,7 @@ export default function Main() {
                     />    
                     <TextInput
                       style = {styles.enter}
-                      placeholder ='Enter a feature here ... '
+                      placeholder ="Enter a feature here ... "
                       value = {defaultText}
                       onFocus={() => EnterText('')}
                       onChangeText={(text) => EnterText(text)}
@@ -226,25 +240,46 @@ export default function Main() {
                     <View style = {styles.confirmSelectionsButton}>
                       <TouchableOpacity 
                           style = {styles.confirmButton} 
-                          onPress={() => generateRequestFromFiles(seturl, selectedBools, getFeaturesToExclude())}
+                          onPress={() => generateRequestFromFiles(seturl, selectedBools, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings)}
                       >
                         <Text style = {styles.textStyle}> Confirm Selections </Text>
                       </TouchableOpacity>
                     </View>
 
                 </View>
-                <View style = {styles.generateDownloadAppContainer}> 
+                <View style ={styles.nlpPredictionsContainer}>
+                  <Text> These are the features we think you have requested</Text>
+                  <FlatList
+                        data = {translatedRequests}
+                        renderItem={({ item }) => (
+                          <View style={styles.bullet}>
+                            <Text style={
+                              { fontSize: 18,
+                                color: "#000",
+                                marginLeft: 15,
+                                fontWeight: "600",
+                              } 
+                          }>&#8226; {item}</Text>
+                          </View>
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                    />  
+                    <View style = {styles.generateDownloadAppContainer}>
                       {url ? (
-                        <TouchableOpacity 
-                            style = {styles.generateButton} 
-                            onPress={() => Linking.openURL(url)}
-                        >
-                          <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
-                        </TouchableOpacity>
-                      ) : (
-                        <Text>Confirm Selections to Download App...</Text>
-                      )}
+                          <TouchableOpacity 
+                              style = {styles.generateButton} 
+                              onPress={() => Linking.openURL(url)}
+                          >
+                            <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <Text>Confirm Selections to Download App...</Text>
+                        )}
+                    </View>  
                 </View>
+                {/* <View style = {styles.generateDownloadAppContainer}> 
+                      
+                </View> */}
               
               <View style = {styles.displaySelectionContainer}>
               </View>
@@ -255,19 +290,28 @@ export default function Main() {
       );
     }
   
-async function generateRequestFromFiles(seturl, fileList, excludedFeatures) {
+async function generateRequestFromFiles(seturl, fileList, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings) {
   console.log(fileList);
   console.log('editing file...');
-  await modifyFile(fileList);
-
-  // Add in welcome note to all apps
-  // fileList = [...fileList, "Welcome.pdf"]
-  // fileList = [...fileList, "selected_features.js"]
+  //await processText(userRequests);
+  
+  // await processText(userRequests, fileNameMappings).then((res) => {
+  //   setTranslatedRequests(res);
+  //   //setPredictions(res.data.prediction)
+  // }, []);
+  // const mappedPredictions = translatedRequests.map((prediction) => fileNameMappings[prediction]);
+  // console.log(mappedPredictions)
+  const {predictions, mappedPredictions, mappedBools} = await processText(userRequests, fileNameMappings, boolMappings);
+  setTranslatedRequests(predictions);
+  console.log(translatedRequests);
+  console.log(mappedPredictions);
+  console.log(mappedBools);
+  await modifyFile(mappedBools);
+  //console.log(translatedRequests);
+  //setPredictions(translatedRequests.)
   await Firebase('GeneratedApp', []).then((res) => {
       seturl(res);
   }, []);
-
-  
 
 }
 
@@ -367,13 +411,19 @@ const styles = StyleSheet.create({
       borderBottomWidth: 1,
       borderBottomColor: 'black',
       width: "100%"},
-
+    nlpPredictionsContainer:{
+      alignItems: 'center',
+        justifyContent: 'flex-start',
+        alignSelf:'stretch',
+        paddingLeft: "25%",
+    },
       generateDownloadAppContainer: {
 
         //alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'center',
-        paddingLeft: "25%",
+        justifyContent: 'flex-end',
+        // paddingLeft: "25%",
+        paddingBottom: 50
         //position: 'absolute',
         // bottom: "-50%",
         // left: "75%",
