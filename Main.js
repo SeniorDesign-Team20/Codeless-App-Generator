@@ -4,6 +4,7 @@ import Checkbox from "./CheckBox";
 import Firebase from "./firebase";
 import modifyFile from "./ModifyFile"
 import {processText, makePrediction} from "./NLP";
+import Lottie from 'lottie-react';
 
 export default function Main() {
     
@@ -77,7 +78,7 @@ export default function Main() {
     const [url, seturl] = useState('');
     const [userRequests, setUserRequests] = useState([]);
     const [translatedRequests, setTranslatedRequests] = useState([]);
-    
+    const [isLoading, setIsLoading] = useState(false); 
     console.log(url);
 
     const [predictions, setPredictions] = useState([]);
@@ -132,6 +133,13 @@ export default function Main() {
     )
 
     const [test, setTest] = useState("");
+    
+    const generateApp = async () => {
+      setIsLoading(true); // set loading to true
+      console.log("Starting loading");
+      await generateRequestFromFiles(seturl, selectedBools, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings);
+      setIsLoading(false); // set loading back to false
+    };
 
     return (
         <View style={styles.container}>
@@ -189,54 +197,58 @@ export default function Main() {
                     <View style = {styles.confirmSelectionsButton}>
                       <TouchableOpacity 
                           style = {styles.confirmButton} 
-                          onPress={() => generateRequestFromFiles(seturl, selectedBools, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings)}
+                          onPress={() => generateApp()}
                       >
                         <Text style = {styles.textStyle}> Confirm Selections </Text>
                       </TouchableOpacity>
                     </View>
 
                 </View>
-                <View style ={styles.nlpPredictionsContainer}>
-                  {translatedRequests ? (         
-                    <Text> Here will be the features we think you have requested.
-                             {"\n"} If any don't seem right, you can add more or remove any
-                             {"\n"} using the +/- buttons. </Text>
+                {isLoading ? (
+                <View style={{ alignSelf: 'center', paddingLeft:200}}>
+                    <Lottie
+                      animationData={require('./assets/98432-loading.json')}
+                      autoPlay
+                      loop
+                      style={{width: '75%', height: '75%'}}
+                    />
+                  </View>
                   ):(
-                    <Text></Text>
-                  )
-                  }
-                  <FlatList
-                        data = {translatedRequests}
-                        renderItem={({ item }) => (
-                          <View style={styles.bullet}>
-                            <Text style={
-                              { fontSize: 18,
-                                color: "#000",
-                                marginLeft: 15,
-                                fontWeight: "600",
-                              } 
-                          }>&#8226; {item}</Text>
-                          </View>
-                        )}
-                        keyExtractor={(item, index) => index.toString()}
-                    />  
-                    <View style = {styles.generateDownloadAppContainer}>
-                      {url ? (
-                          <TouchableOpacity 
-                              style = {styles.generateButton} 
-                              onPress={() => Linking.openURL(url)}
-                          >
-                            <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
-                          </TouchableOpacity>
-                        ) : (
-                          <Text>Confirm Selections to Download App...</Text>
-                        )}
-                    </View>  
-                </View>
-                {/* <View style = {styles.generateDownloadAppContainer}> 
+                <View style ={styles.nlpPredictionsContainer}>      
+                    <Text> Here are the features we think you have requested.
+                             {"\n"} If any don't seem right, you can add more or remove any
+                             {"\n"} using the +/- buttons.          
+                    </Text>
+                    <FlatList
+                          data = {translatedRequests}
+                          renderItem={({ item }) => (
+                            <View style={styles.bullet}>
+                              <Text style={
+                                { fontSize: 18,
+                                  color: "#000",
+                                  marginLeft: 15,
+                                  fontWeight: "600",
+                                } 
+                            }>&#8226; {item}</Text>
+                            </View>
+                          )}
+                          keyExtractor={(item, index) => index.toString()}
+                      />  
                       
-                </View> */}
-              
+                      <View style = {styles.generateDownloadAppContainer}>
+                        {url ? (
+                            <TouchableOpacity 
+                                style = {styles.generateButton} 
+                                onPress={() => Linking.openURL(url)}
+                            >
+                              <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
+                            </TouchableOpacity>
+                          ) : (
+                            <Text>Confirm Selections to Download App...</Text>
+                          )}
+                      </View>  
+                </View>
+                  )}
               <View style = {styles.displaySelectionContainer}>
               </View>
             </View>
