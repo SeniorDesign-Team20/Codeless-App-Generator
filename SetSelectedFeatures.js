@@ -6,15 +6,32 @@ export default function setSelectedFeatures(featureFiles) {
     //     "People Page": "People",
     //     "FAQ Page": "FAQs.js"
     //   };
-
-    const selectedFeatures = 
-    {
+    const selectedFeatures = {
         "googleLogin": false,
         "weather": false,
         "calendar": false,
         "people": false,
-        "faq":false
-    };
+        "faq": false,
+         "about": false,
+         "activityFeed": false,
+         "apply": false,
+         "calculator": false,
+         "chatbot": false,
+         "contact": false,
+         "chat": false,
+         "fileUpload": false,
+         "careers": false,
+         "map": false,
+        //"Menu": "": false,
+        "products": false,
+        "people": false,
+        "photoBooth": false,
+        "privacy": false,
+        "qr": false,
+        "reviews": false,
+        //"Store Hours": "hours": false,
+      };
+
 
     //Loop through requested features to assign booleans
     for (const element in selectedFeatures) {
