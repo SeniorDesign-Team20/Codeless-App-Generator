@@ -3,15 +3,32 @@ import { useState, useEffect } from "react";
 import Checkbox from "./CheckBox";
 import Firebase from "./firebase";
 import modifyFile from "./ModifyFile"
-import processText from "./NLP";
+import {processText, makePrediction} from "./NLP";
 
 export default function Main() {
     
     const fileNameMappings = {
-      "Google Sign-in": "Google_Login",
-      "Weather": "Weather",
+      "About Page": "About",
+      "Activity Feed": "",
+      "Application Page": "Apply",
+      "Calculator": "Calculator",
       "Calendar" : "Calendar",
+      "Chatbot": "",
+      "Contact Form": "Contact",
+      "Discussion Forum": "",
+      "FAQ Page": "FAQs",
+      "File Upload": "File_Upload",
+      "Google Sign-in": "Google_Login",
+      "Job Openings": "Careers",
+      "Map": "Map",
+      "Menu": "",
+      "Online Store": "Shopping",
       "People Page": "People",
+      "Photobooth": "Photo_Booth",
+      "Privacy Policy": "Privacy",
+      "QR Code Scanner": "QR",
+      "Reviews": "Reviews",
+      "Weather": "Weather",
       "FAQ Page": "FAQs"
     };
 
@@ -21,12 +38,32 @@ export default function Main() {
                          "Reviews", "Weather"];
 
     const boolMappings = {
-      "Google_Login":"googleLogin",
+      "Google_Login": "googleLogin",
       "Weather": "weather",
       "Calendar": "calendar",
       "People": "people",
-      "FAQs":"faq"
-  };
+      "FAQs": "faq",
+      "About": "about",
+      //"Activity Feed": "activityFeed",
+      "Apply": "apply",
+      "Calculator": "calculator",
+      //"Chatbot": "chatbot",
+      "Contact": "contact",
+      //"Discussion Forum": "",
+      "File_Upload": "fileUpload",
+      "Careers": "careers",
+      "Map": "map",
+      //"Menu": "",
+      "Shopping": "products",
+      "People": "people",
+      "Photo_Booth": "photoBooth",
+      "Privacy": "privacy",
+      "QR": "qr",
+      "Reviews": "reviews",
+      //"Shopping": "",
+      //"Store Hours": "hours",
+    };
+  
     
     const [feature1, set1] = useState(false);
     const [feature2, set2] = useState(false);
@@ -46,86 +83,7 @@ export default function Main() {
 
     const [predictions, setPredictions] = useState([]);
 
-    const setFeat1 = (feat) => {
-      set1(!feat);
-      if (!feat)
-      {
-        setFeatures(arr => [...arr, "Google Sign-in"])
-        setFiles(arr => [... arr, fileNameMappings["Google Sign-in"]])
-        setBools(arr => [... arr, "googleLogin"])
-      }
-      else{
-        const index = selectedFeatures.indexOf("Google Sign-in")
-        selectedFeatures.splice(index, 1)
-        selectedFiles.splice(index, 1)
-      }
-      console.log(selectedFeatures.toString())
-    }
-
-    const setFeat2 = (feat) => {
-      set2(!feat);
-      if (!feat)
-      {
-        setFeatures(arr => [...arr, "Weather"])
-        setFiles(arr => [... arr, fileNameMappings["Weather"]])
-        setBools(arr => [... arr, "weather"])
-
-      }
-      else{
-        const index = selectedFeatures.indexOf("Weather")
-        selectedFeatures.splice(index, 1)
-        selectedFiles.splice(index,1)
-      }
-      console.log(selectedFeatures.toString())
-    }
-
-    const setFeat3 = (feat) => {
-      set3(!feat);
-      if (!feat)
-      {
-        setFeatures(arr => [...arr, "Calendar"])
-        setFiles(arr => [...arr, fileNameMappings["Calendar"]])
-        setBools(arr => [... arr, "calendar"])
-      }
-      else{
-        const index = selectedFeatures.indexOf("Calendar")
-        selectedFeatures.splice(index, 1)
-        selectedFiles.splice(index,1)
-      }
-      console.log(selectedFeatures.toString())
-    }
-
-    const setFeat4 = (feat) => {
-      set4(!feat);
-      if (!feat)
-      {
-        setFeatures(arr => [...arr, "People Page"])
-        setFiles(arr => [...arr, fileNameMappings["People Page"]])
-        setBools(arr => [... arr, "people"])
-      }
-      else{
-        const index = selectedFeatures.indexOf("People Page")
-        selectedFeatures.splice(index, 1)
-        selectedFiles.splice(index,1)
-      }
-      console.log(selectedFeatures.toString())
-    }
-
-    const setFeat5 = (feat) => {
-      set5(!feat);
-      if (!feat)
-      {
-        setFeatures(arr => [...arr, "FAQ Page"])
-        setFiles(arr => [...arr, fileNameMappings["FAQ Page"]])
-        setBools(arr => [... arr, "faq"])
-      }
-      else{
-        const index = selectedFeatures.indexOf("FAQ Page")
-        selectedFeatures.splice(index, 1)
-        selectedFiles.splice(index, 1)
-      }
-      console.log(selectedFeatures.toString())
-    }
+    // 
 
     var[defaultText, EnterText] = useState('');
 
@@ -135,6 +93,7 @@ export default function Main() {
       redirect('')
       setFeatures(arr => [...arr, inputText])
       setUserRequests(arr => [...arr, inputText])
+      //getPrediction(inputText, fileNameMappings, boolMappings)
     }
 
     const removeFeature = () => {
@@ -173,35 +132,26 @@ export default function Main() {
       EnterText(val)
     )
 
+    const [test, setTest] = useState("");
+
     return (
         <View style={styles.container}>
             <View style = {styles.contentContainer}>
               <View syle={styles.chooseFeaturesContainer}>
                     <Checkbox
-                      onPress = {() =>{setFeat1(feature1)}}
-                      title="Google Sign-in"
+                      //onPress = {() =>{setFeat1(feature1)}}
+                      title="1. Enter what features you would like to be in your app below"
                       isChecked={feature1}
                     />
                     <Checkbox
-                      onPress = {() => setFeat2(feature2)}
-                      title="Weather"
-                      isChecked={feature2}
+                      title="2. Confirm your entries to get the available features"
                     />
                     <Checkbox
-                      onPress={() => setFeat3(feature3)}
-                      title="Calendar"
-                      isChecked={feature3}
+                      title="3. Generate your app"
                     />
                     <Checkbox
-                      onPress={() => setFeat4(feature4)}
-                      title="People Page"
-                      isChecked={feature4}
+                      title="4. Download your app in a .zip"
                     />
-                    <Checkbox
-                      onPress={() => setFeat5(feature5)}
-                      title="FAQ Page"
-                      isChecked={feature5}
-                    />    
                     <TextInput
                       style = {styles.enter}
                       placeholder ="Enter a feature here ... "
@@ -248,7 +198,14 @@ export default function Main() {
 
                 </View>
                 <View style ={styles.nlpPredictionsContainer}>
-                  <Text> These are the features we think you have requested</Text>
+                  {translatedRequests ? (         
+                    <Text> Here will be the features we think you have requested.
+                             {"\n"} If any don't seem right, you can add more or remove any
+                             {"\n"} using the +/- buttons. </Text>
+                  ):(
+                    <Text></Text>
+                  )
+                  }
                   <FlatList
                         data = {translatedRequests}
                         renderItem={({ item }) => (
@@ -291,29 +248,31 @@ export default function Main() {
     }
   
 async function generateRequestFromFiles(seturl, fileList, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings) {
-  console.log(fileList);
-  console.log('editing file...');
-  //await processText(userRequests);
-  
-  // await processText(userRequests, fileNameMappings).then((res) => {
-  //   setTranslatedRequests(res);
-  //   //setPredictions(res.data.prediction)
-  // }, []);
-  // const mappedPredictions = translatedRequests.map((prediction) => fileNameMappings[prediction]);
-  // console.log(mappedPredictions)
-  const {predictions, mappedPredictions, mappedBools} = await processText(userRequests, fileNameMappings, boolMappings);
-  setTranslatedRequests(predictions);
-  console.log(translatedRequests);
-  console.log(mappedPredictions);
-  console.log(mappedBools);
-  await modifyFile(mappedBools);
-  //console.log(translatedRequests);
-  //setPredictions(translatedRequests.)
-  await Firebase('GeneratedApp', []).then((res) => {
-      seturl(res);
-  }, []);
+    console.log(fileList);
+    console.log('editing file...');
+
+    const {predictions, mappedPredictions, mappedBools} = await processText(userRequests, fileNameMappings, boolMappings);
+    setTranslatedRequests(predictions);
+    console.log(translatedRequests);
+    console.log(mappedPredictions);
+    console.log(mappedBools);
+    await modifyFile(mappedBools);
+    //console.log(translatedRequests);
+    //setPredictions(translatedRequests.)
+    await Firebase('GeneratedApp1', []).then((res) => {
+        seturl(res);
+    }, []);
 
 }
+
+// async function getPrediction(test, setTest, fileNameMappings, boolMappings){
+//     const {prediction, mappedPredictions, mappedBools} = await makePrediction(test, fileNameMappings, boolMappings);
+//     setTranslatedRequests(arr => [...arr, prediction])
+//     console.log(predictions)
+//     console.log(mappedPredictions)
+//     console.log(mappedBools)
+    
+// }
 
   
 const styles = StyleSheet.create({
@@ -434,4 +393,106 @@ const styles = StyleSheet.create({
 });
 
 
+                    {/* <Checkbox
+                      onPress = {() => setFeat2(feature2)}
+                      title="Weather"
+                      isChecked={feature2}
+                    />
+                    <Checkbox
+                      onPress={() => setFeat3(feature3)}
+                      title="Calendar"
+                      isChecked={feature3}
+                    />
+                    <Checkbox
+                      onPress={() => setFeat4(feature4)}
+                      title="People Page"
+                      isChecked={feature4}
+                    />
+                    <Checkbox
+                      onPress={() => setFeat5(feature5)}
+                      title="FAQ Page"
+                      isChecked={feature5}
+                    />     */}
 
+
+
+// const setFeat1 = (feat) => {
+  //   set1(!feat);
+  //   if (!feat)
+  //   {
+  //     setFeatures(arr => [...arr, "Google Sign-in"])
+  //     setFiles(arr => [... arr, fileNameMappings["Google Sign-in"]])
+  //     setBools(arr => [... arr, "googleLogin"])
+  //   }
+  //   else{
+  //     const index = selectedFeatures.indexOf("Google Sign-in")
+  //     selectedFeatures.splice(index, 1)
+  //     selectedFiles.splice(index, 1)
+  //   }
+  //   console.log(selectedFeatures.toString())
+  // }
+
+  // const setFeat2 = (feat) => {
+  //   set2(!feat);
+  //   if (!feat)
+  //   {
+  //     setFeatures(arr => [...arr, "Weather"])
+  //     setFiles(arr => [... arr, fileNameMappings["Weather"]])
+  //     setBools(arr => [... arr, "weather"])
+
+  //   }
+  //   else{
+  //     const index = selectedFeatures.indexOf("Weather")
+  //     selectedFeatures.splice(index, 1)
+  //     selectedFiles.splice(index,1)
+  //   }
+  //   console.log(selectedFeatures.toString())
+  // }
+
+  // const setFeat3 = (feat) => {
+  //   set3(!feat);
+  //   if (!feat)
+  //   {
+  //     setFeatures(arr => [...arr, "Calendar"])
+  //     setFiles(arr => [...arr, fileNameMappings["Calendar"]])
+  //     setBools(arr => [... arr, "calendar"])
+  //   }
+  //   else{
+  //     const index = selectedFeatures.indexOf("Calendar")
+  //     selectedFeatures.splice(index, 1)
+  //     selectedFiles.splice(index,1)
+  //   }
+  //   console.log(selectedFeatures.toString())
+  // }
+
+  // const setFeat4 = (feat) => {
+  //   set4(!feat);
+  //   if (!feat)
+  //   {
+  //     setFeatures(arr => [...arr, "People Page"])
+  //     setFiles(arr => [...arr, fileNameMappings["People Page"]])
+  //     setBools(arr => [... arr, "people"])
+  //   }
+  //   else{
+  //     const index = selectedFeatures.indexOf("People Page")
+  //     selectedFeatures.splice(index, 1)
+  //     selectedFiles.splice(index,1)
+  //   }
+  //   console.log(selectedFeatures.toString())
+  // }
+
+  // const setFeat5 = (feat) => {
+  //   set5(!feat);
+  //   if (!feat)
+  //   {
+  //     setFeatures(arr => [...arr, "FAQ Page"])
+  //     setFiles(arr => [...arr, fileNameMappings["FAQ Page"]])
+  //     setBools(arr => [... arr, "faq"])
+  //   }
+  //   else{
+  //     const index = selectedFeatures.indexOf("FAQ Page")
+  //     selectedFeatures.splice(index, 1)
+  //     selectedFiles.splice(index, 1)
+  //   }
+  //   console.log(selectedFeatures.toString())
+  // }

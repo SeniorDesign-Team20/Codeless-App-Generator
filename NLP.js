@@ -1,37 +1,68 @@
 import axios from 'axios';
 
-const processText = async (userRequests, fileNameMappings, boolMap) => {
+export const processText = async (userRequests, fileNameMappings, boolMap) => {
 
-  const options = {
-    method: 'POST',
-    url: 'https://api.cohere.ai/v1/classify',
-    headers: {
-      accept: 'application/json',
-      'content-type': 'application/json',
-      authorization: 'Bearer LFR23e8GH8nJr5ll2tXYRYh0MFP28ShNTtIohwPs',
-    },
-    data: {
-      inputs: userRequests,
-      truncate: 'END',
-      model: 'ce2368da-c965-4bf2-8ba1-feae8bf94899-ft',
-    },
-  };
+    const options = {
+        method: 'POST',
+        url: 'https://api.cohere.ai/v1/classify',
+        headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization: 'Bearer LFR23e8GH8nJr5ll2tXYRYh0MFP28ShNTtIohwPs',
+        },
+        data: {
+        inputs: userRequests,
+        truncate: 'END',
+        model: 'ce2368da-c965-4bf2-8ba1-feae8bf94899-ft',
+        },
+    };
 
-  try {
-    const response = await axios.request(options);
-    //console.log(response.data.classifications);
-    const predictions = response.data.classifications.map((classification) => classification.prediction);
-    //console.log(predictions)
-    const mappedPredictions = predictions.map((prediction) => fileNameMappings[prediction]);
-    const mappedBools = mappedPredictions.map((fileName) =>boolMap[fileName]);
-    //console.log(mappedPredictions)
-    return {predictions, mappedPredictions, mappedBools};
-  } catch (error) {
-    console.error(error);
-  }
+    try {
+        const response = await axios.request(options);
+        //console.log(response.data.classifications);
+        const predictions = response.data.classifications.map((classification) => classification.prediction);
+        //console.log(predictions)
+        const mappedPredictions = predictions.map((prediction) => fileNameMappings[prediction]);
+        const mappedBools = mappedPredictions.map((fileName) =>boolMap[fileName]);
+        //console.log(mappedPredictions)
+        return {predictions, mappedPredictions, mappedBools};
+    } catch (error) {
+        console.error(error);
+    }
 };
 
-export default processText;
+export const makePrediction = async (entry, fileNameMappings, boolMap) => {
+    const options = {
+        method: 'POST',
+        url: 'https://api.cohere.ai/v1/classify',
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          authorization: 'Bearer LFR23e8GH8nJr5ll2tXYRYh0MFP28ShNTtIohwPs',
+        },
+        data: {
+          inputs: [entry],
+          truncate: 'END',
+          model: 'ce2368da-c965-4bf2-8ba1-feae8bf94899-ft',
+        },
+      };
+    
+      try {
+        const response = await axios.request(options);
+        //console.log(response.data.classifications);
+        const predictions = response.data.classifications.map((classification) => classification.prediction);
+        //console.log(predictions)
+        const mappedPredictions = predictions.map((prediction) => fileNameMappings[prediction]);
+        const mappedBools = mappedPredictions.map((fileName) =>boolMap[fileName]);
+        //console.log(mappedPredictions)
+        return {predictions, mappedPredictions, mappedBools};
+      } catch (error) {
+        console.error(error);
+      }
+}
+
+
+
 
 
 // import { CohereClient } from 'cohere-ai';
