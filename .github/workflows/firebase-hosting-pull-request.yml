@@ -12,10 +12,15 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install Expo CLI
         run: npm install -g expo-cli
-      - run: 'npx expo build:web'
+      - name: Install Babel dependencies
+        run: npm install --save-dev babel-preset-expo @babel/core @babel/preset-env
+      - name: Update Babel configuration
+        run: echo '{"presets": ["@babel/preset-env", "babel-preset-expo"]}' > .babelrc
+      - run: npx expo build:web
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CODELESS_APP_GENERATOR }}'
           projectId: codeless-app-generator
+
 
