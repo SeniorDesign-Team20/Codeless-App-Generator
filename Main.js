@@ -1,9 +1,7 @@
-import { StyleSheet, View, Alert, FlatList, Button, Text, TextInput, TouchableOpacity, Linking, ScrollView } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faSolid,faCheck, faPlus, faMinus, faRetweet} from "@fortawesome/free-solid-svg-icons";
+import { StyleSheet, View, Alert, FlatList, Button, Text, TextInput, TouchableOpacity, Linking } from "react-native";
 import { useState, useEffect } from "react";
 import Checkbox from "./CheckBox";
-import Firebase from "./database";
+import Firebase from "./firebase";
 import modifyFile from "./ModifyFile"
 import {processText, makePrediction} from "./NLP";
 import Lottie from 'lottie-react';
@@ -52,7 +50,7 @@ export default function Main() {
       "Calculator": "calculator",
       "Chatbot": "chatbot",
       "Contact": "contact",
-      "Chat": "chat",
+      "Discussion Forum": "chat",
       "File_Upload": "fileUpload",
       "Careers": "careers",
       "Map": "map",
@@ -80,11 +78,13 @@ export default function Main() {
     const [url, seturl] = useState('');
     const [userRequests, setUserRequests] = useState([]);
     const [translatedRequests, setTranslatedRequests] = useState([]);
-    const [isGenerating, setIsGenerating] = useState(false); 
-    const [loadingItemIndex, setLoadingItemIndex] = useState(0);
-    const [nextBest, setNextBest] = useState([])
+    const [isLoading, setIsLoading] = useState(false); 
+    console.log(url);
+
+    const [predictions, setPredictions] = useState([]);
+
     // 
-    //console.log(url)
+
     var[defaultText, EnterText] = useState('');
 
     const addFeature = (inputText) => {
@@ -93,48 +93,7 @@ export default function Main() {
       redirect('')
       setFeatures(arr => [...arr, inputText])
       setUserRequests(arr => [...arr, inputText])
-      console.log('User requests length: %d', userRequests.length)
-      if (userRequests.length === 0)
-      {
-        console.log('checked')
-        setLoadingItemIndex(0);
-        console.log('%d', loadingItemIndex)
-      }
-      else {
-        setLoadingItemIndex(userRequests.length-1)
-      }
-      setUserRequests(arr => arr.slice(1))
-      predict(inputText); 
-    }
-
-    const updateAtIndex = (index, newValue) => {
-      setNextBest(prevArr => prevArr.map((item, i) => i === index ? newValue : item));
-    };
-
-    const swapFeatures = (item, key, index1) => {
-      const updatedNextBest = JSON.parse(JSON.stringify(item));
-      //console.log(updatedNextBest)
-      const mainPrediction = item.prediction;
-      const featureToSwap = key;
-      console.log(key)
-      updatedNextBest.prediction = featureToSwap;
-      
-      updatedNextBest.topFour[featureToSwap] = "Nothing";
-      console.log(updatedNextBest);
-      //delete updatedNextBest.topFour[featureToSwap];
-      //console.log(updatedNextBest);
-      updateAtIndex(index1, updatedNextBest);
-        //setNextBest(arr => [...arr, updatedNextBest]);
-      // console.log(index)
-      // const currPrediction = nextBest[index]["prediction"];
-      // console.log(currPrediction);
-      // const currTopFour = nextBest[index]["topFour"]
-      // console.log(currTopFour)
-      // const newTopFour = { ...currTopFour };
-      // delete newTopFour[replacement];
-      // newTopFour[currPrediction] = { confidence: currTopFour[replacement].confidence };
-      
-      // setNextBest(arr => [...arr, newTopFour])
+      //getPrediction(inputText, fileNameMappings, boolMappings)
     }
 
     const removeFeature = () => {
@@ -155,27 +114,32 @@ export default function Main() {
         setFeatures(arr => arr.slice(0, -1))
         setFiles(arr => arr.slice(0, -1))
         setBools(arr => arr.slice(0, -1))
-        setTranslatedRequests(arr => arr.slice(0,-1))
     }
 
+    const getFeaturesToExclude = () => {
+      const featuresToExclude = [];
+      for (const element in fileNameMappings){
+        if (!selectedFeatures.includes(element)){
+          featuresToExclude.push(fileNameMappings[element])
+        }
+      }
+      console.log('Excluded Features:');
+      console.log(featuresToExclude);
+      return featuresToExclude;
+    }
     
     const redirect = (val) =>(
       EnterText(val)
     )
+
+    const [test, setTest] = useState("");
     
     const generateApp = async () => {
-      setIsGenerating(true); // set loading to true
+      setIsLoading(true); // set loading to true
       console.log("Starting loading");
-      await generateRequestFromFiles(seturl, selectedBools);//, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings);
-      setIsGenerating(false); // set loading back to false
+      await generateRequestFromFiles(seturl, selectedBools, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings);
+      setIsLoading(false); // set loading back to false
     };
-
-    const predict = async (input) => {
-      console.log("getting prediction");
-        // Code to be executed asynchronously after 3 seconds
-      await getPrediction(setTranslatedRequests, input, fileNameMappings, boolMappings, setBools, setNextBest);
-      console.log("got prediction");
-    }
 
     return (
         <View style={styles.container}>
@@ -184,7 +148,7 @@ export default function Main() {
                     <Checkbox
                       //onPress = {() =>{setFeat1(feature1)}}
                       title="1. Enter what features you would like to be in your app below"
-                      //isChecked={feature1}
+                      isChecked={feature1}
                     />
                     <Checkbox
                       title="2. Confirm your entries to get the available features"
@@ -240,7 +204,7 @@ export default function Main() {
                     </View>
 
                 </View>
-                {isGenerating ? (
+                {isLoading ? (
                 <View style={{ alignSelf: 'center', paddingLeft:200}}>
                     <Lottie
                       animationData={require('./assets/98432-loading.json')}
@@ -252,78 +216,37 @@ export default function Main() {
                   ):(
                 <View style ={styles.nlpPredictionsContainer}>      
                     <Text> Here are the features we think you have requested.
-                    {"\n"} If any don't seem right, you can add more or remove any
-                    {"\n"} using the buttons.          
+                             {"\n"} If any don't seem right, you can add more or remove any
+                             {"\n"} using the +/- buttons.          
                     </Text>
-                    
-                  <FlatList
-                    data={nextBest}
-                    renderItem={({ item, index1 }) => (
-                      <View style={styles.bullet}>
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "#000",
-                            marginLeft: 15,
-                            fontWeight: "600",
-                          }}
-                        >
-                          &#8226; {item.prediction} {"  "}
-                          <TouchableOpacity style={{backgroundColor: "coral",
-                                                    borderRadius: 8,
-                                                    paddingLeft: 15,
-                                                    paddingRight: 15,}}>
-                              <Text style={{fontSize:16,
-                                            fontWeight:'bold',
-                                            color: 'white'}}> 
-                                Remove <FontAwesomeIcon icon={faMinus} style={{color: "white",}} /> </Text>
-                          </TouchableOpacity>
-                        </Text>
-                        {Object.entries(item.topFour).map(([key, value], index) => (
-                          <View key={index} style={styles.bullet}>
-                            <Text
-                              style={{
-                                fontSize: 16,
-                                color: "#000",
-                                marginLeft: 30,
-                                fontWeight: "500",
-                              }}
-                            >
-                              &#8226; Did you mean {key}? {"  "}
-                              <TouchableOpacity style={{backgroundColor: "darkgreen",
-                                                        borderRadius: 8,
-                                                        paddingLeft: 15,
-                                                        paddingRight: 15,
-                                                      }}
-                                                onPress={() => swapFeatures(item, key, index)}
-                                                      
-                                                      >
-                              <Text style={{fontSize:16,
-                                            fontWeight:'bold',
-                                            color: 'white'}}> 
-                                Yes <FontAwesomeIcon icon={faRetweet} style={{color: "white",}} /> </Text>
-                            </TouchableOpacity>
-                            </Text>
-                          </View>
-                        ))}
-                      </View>
-                    )}
-                    keyExtractor={(item, index) => index.toString()}
-                  />
-
+                    <FlatList
+                          data = {translatedRequests}
+                          renderItem={({ item }) => (
+                            <View style={styles.bullet}>
+                              <Text style={
+                                { fontSize: 18,
+                                  color: "#000",
+                                  marginLeft: 15,
+                                  fontWeight: "600",
+                                } 
+                            }>&#8226; {item}</Text>
+                            </View>
+                          )}
+                          keyExtractor={(item, index) => index.toString()}
+                      />  
                       
-                    <View style = {styles.generateDownloadAppContainer}>
-                      {url ? (
-                          <TouchableOpacity 
-                              style = {styles.generateButton} 
-                              onPress={() => Linking.openURL(url)}
-                          >
-                            <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
-                          </TouchableOpacity>
-                        ) : (
-                          <Text>Confirm Selections to Download App...</Text>
-                        )}
-                    </View>  
+                      <View style = {styles.generateDownloadAppContainer}>
+                        {url ? (
+                            <TouchableOpacity 
+                                style = {styles.generateButton} 
+                                onPress={() => Linking.openURL(url)}
+                            >
+                              <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
+                            </TouchableOpacity>
+                          ) : (
+                            <Text>Confirm Selections to Download App...</Text>
+                          )}
+                      </View>  
                 </View>
                   )}
               <View style = {styles.displaySelectionContainer}>
@@ -335,38 +258,37 @@ export default function Main() {
       );
     }
   
-async function generateRequestFromFiles(seturl, selectedBools) {
+async function generateRequestFromFiles(seturl, fileList, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings) {
+    console.log(fileList);
     console.log('editing file...');
 
-    await modifyFile(selectedBools);
-    
+    const {predictions, mappedPredictions, mappedBools} = await processText(userRequests, fileNameMappings, boolMappings);
+    setTranslatedRequests(predictions);
+    console.log(translatedRequests);
+    console.log(mappedPredictions);
+    console.log(mappedBools);
+    await modifyFile(mappedBools);
+    //console.log(translatedRequests);
+    //setPredictions(translatedRequests.)
     await Firebase('GeneratedApp1', []).then((res) => {
         seturl(res);
     }, []);
 
 }
 
-async function getPrediction(setTranslatedRequests, userRequests, fileNameMappings, boolMappings, setBools, setNextBest){
-    //const {prediction, mappedPredictions, mappedBools} = await makePrediction(userRequests, fileNameMappings, boolMappings);
-    const predictions = await makePrediction(userRequests, fileNameMappings, boolMappings);
-    setNextBest(arr => [...arr, predictions])
-    const prediction = predictions['prediction']
-
-    console.log(prediction);
-    setTranslatedRequests(arr => [...arr, prediction])
-
-    const fileName = fileNameMappings[prediction];
-    setBools(arr => [...arr, boolMappings[fileName]]);
+// async function getPrediction(test, setTest, fileNameMappings, boolMappings){
+//     const {prediction, mappedPredictions, mappedBools} = await makePrediction(test, fileNameMappings, boolMappings);
+//     setTranslatedRequests(arr => [...arr, prediction])
+//     console.log(predictions)
+//     console.log(mappedPredictions)
+//     console.log(mappedBools)
     
-    console.log(boolMappings[fileName]);
-    
-}
+// }
 
   
 const styles = StyleSheet.create({
     bullet: {
-        paddingTop: 25,
-        paddingBottom: 15
+        paddingTop: 25
     },
     confirmButton: {
         backgroundColor: "darkgreen",
@@ -464,7 +386,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignSelf:'stretch',
         paddingLeft: "25%",
-        paddingBottom: 20
     },
       generateDownloadAppContainer: {
 
@@ -481,53 +402,6 @@ const styles = StyleSheet.create({
       },
     
 });
-
-{/* <Text>
-                    Here are the features we think you have requested.
-                    {"\n"} If any don't seem right, you can add more or remove any
-                    {"\n"} using the +/- buttons.
-                  </Text>
-                  <FlatList
-                    data={translatedRequests}
-                    renderItem={({ item, index }) => (
-                      <View style={styles.bullet}>
-                        
-                      {isPredicting && (index === loadingItemIndex) ? 
-                      (
-                        <View style={{flexDirection: "row", alignItems: "center",}}>
-                          <Text style={{fontSize: 18, color: "transparent", marginLeft: 15, fontWeight: "600",}}>
-
-                             {/* &#8226; This is a bullet in HTML */}
-                  //           </Text>
-                  //           <Lottie
-                  //             animationData={require("./assets/rrDgR8atjb.json")}
-                  //             autoPlay
-                  //             loop
-                  //             style={{
-                  //               width: '50%', // Adjust the width and height according to your animation
-                  //               height: '50%',
-                  //             }}
-                  //           />
-                  //         </View>
-                  //       ) : (
-                          
-                  //         <Text
-                  //           style={{
-                  //             fontSize: 18,
-                  //             color: "#000",
-                  //             marginLeft: 15,
-                  //             fontWeight: "600",
-                  //           }}
-                  //         >
-                  //           &#8226; {item}
-                  //         </Text>
-                  //       )}
-                  //     </View>
-                  //   )}
-                  //   keyExtractor={(item, index) => index.toString()}
-                  //   extraData={{ isPredicting, loadingItemIndex }} // Add this line
-
-                  // /> */}
 
 
                     {/* <Checkbox
