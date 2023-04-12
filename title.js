@@ -35,7 +35,6 @@
 //         paddingBottom: 30
 //     }
 // })
-
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, Image,TouchableOpacity, Button, View } from 'react-native';
 
