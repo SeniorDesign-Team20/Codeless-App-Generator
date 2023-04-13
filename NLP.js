@@ -62,7 +62,7 @@ export const makePrediction = async (entry, fileNameMappings, boolMap) => {
         labelsArray.sort((a, b) => b[1].confidence - a[1].confidence);
         
         // Get the top 4 categories
-        const topFour = labelsArray.slice(0, 4);
+        const topFour = labelsArray.slice(0, 2);
 
         // Create a new dictionary with the top 4 categories
         const topFourDict = Object.fromEntries(topFour);

@@ -7,6 +7,7 @@ import Firebase from "./database";
 import modifyFile from "./ModifyFile"
 import {processText, makePrediction} from "./NLP";
 import Lottie from 'lottie-react';
+import setSelectedFeatures from "./SetSelectedFeatures";
 
 export default function Main() {
     
@@ -107,55 +108,43 @@ export default function Main() {
       predict(inputText); 
     }
 
-    const updateAtIndex = (index, newValue) => {
-      setNextBest(prevArr => prevArr.map((item, i) => i === index ? newValue : item));
-    };
-
-    const swapFeatures = (item, key, index1) => {
+    const swapFeatures = (item, key, index, index1) => {
       const updatedNextBest = JSON.parse(JSON.stringify(item));
-      //console.log(updatedNextBest)
       const mainPrediction = item.prediction;
       const featureToSwap = key;
-      console.log(key)
+
       updatedNextBest.prediction = featureToSwap;
+      updatedNextBest.topFour[mainPrediction] = {confidence:1};
+      delete updatedNextBest.topFour[featureToSwap];
       
-      updatedNextBest.topFour[featureToSwap] = "Nothing";
-      console.log(updatedNextBest);
-      //delete updatedNextBest.topFour[featureToSwap];
-      //console.log(updatedNextBest);
-      updateAtIndex(index1, updatedNextBest);
-        //setNextBest(arr => [...arr, updatedNextBest]);
-      // console.log(index)
-      // const currPrediction = nextBest[index]["prediction"];
-      // console.log(currPrediction);
-      // const currTopFour = nextBest[index]["topFour"]
-      // console.log(currTopFour)
-      // const newTopFour = { ...currTopFour };
-      // delete newTopFour[replacement];
-      // newTopFour[currPrediction] = { confidence: currTopFour[replacement].confidence };
+      const temp1 = [...nextBest];
+      temp1[index] = updatedNextBest;
       
-      // setNextBest(arr => [...arr, newTopFour])
+      setNextBest(temp1);
+      //swap within master feature list
+      const temp2 = [...translatedRequests];
+      // console.log(index);
+      // console.log(featureToSwap);
+      // console.log("temp2")
+      // console.log(temp2);
+      temp2[index] = featureToSwap;
+      // console.log("new temp2");
+      // console.log(temp2);
+      setTranslatedRequests([...temp2]);
+      //console.log(translatedRequests);
+
     }
 
     const removeFeature = () => {
-        let featureToRemove = selectedFeatures.slice(-1)[0] 
-        switch (featureToRemove)
-        {
-          case "Google Sign-in":
-            set1(false)
-          case "Weather":
-            set2(false)
-          case "Calendar":
-            set3(false)
-          case "People Page":
-            set4(false)
-          case "FAQ Page":
-            set5(false)
-        }
-        setFeatures(arr => arr.slice(0, -1))
-        setFiles(arr => arr.slice(0, -1))
-        setBools(arr => arr.slice(0, -1))
-        setTranslatedRequests(arr => arr.slice(0,-1))
+
+    }
+
+    const clearAll = () => {
+        setNextBest([])
+        setFeatures([])
+        setFiles([])
+        setBools([])
+        setTranslatedRequests([])
     }
 
     
@@ -166,6 +155,13 @@ export default function Main() {
     const generateApp = async () => {
       setIsGenerating(true); // set loading to true
       console.log("Starting loading");
+      const bools = translatedRequests.map(feature => {
+        const fileName = fileNameMappings[feature];
+        return boolMappings[fileName];
+      });
+      
+      setBools(arr => [...arr, bools]);
+      console.log(selectedBools);
       await generateRequestFromFiles(seturl, selectedBools);//, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings);
       setIsGenerating(false); // set loading back to false
     };
@@ -175,6 +171,12 @@ export default function Main() {
         // Code to be executed asynchronously after 3 seconds
       await getPrediction(setTranslatedRequests, input, fileNameMappings, boolMappings, setBools, setNextBest);
       console.log("got prediction");
+    }
+
+    const removeItemAtIndex = (index) => {
+      console.log()
+      setNextBest(arr => [...arr.slice(0, index), ...arr.slice(index + 1)]);
+      setFeatures(arr => [...arr.slice(0, index), ...arr.slice(index + 1)]);
     }
 
     return (
@@ -206,11 +208,11 @@ export default function Main() {
                     </TextInput>
 
                     <View style = {{flexDirection:'row', justifyContent:'space-evenly'}}>
-                      <TouchableOpacity style = {styles.confirmButton} onPress={() => addFeature(defaultText)}>
+                      <TouchableOpacity style = {styles.addFeatureButton} onPress={() => addFeature(defaultText)}>
                           <Text style = {styles.textStyle}>    Add  Feature    </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style = {styles.removeFeatureButton} onPress={() => removeFeature()}>
-                          <Text style = {styles.textStyle}>    Remove Feature    </Text>
+                      <TouchableOpacity style = {styles.removeFeatureButton} onPress={() => clearAll()}>
+                          <Text style = {styles.textStyle}>    Restart    </Text>
                       </TouchableOpacity>
                     </View>
 
@@ -258,7 +260,7 @@ export default function Main() {
                     
                   <FlatList
                     data={nextBest}
-                    renderItem={({ item, index1 }) => (
+                    renderItem={({ item, index }) => (
                       <View style={styles.bullet}>
                         <Text
                           style={{
@@ -272,15 +274,16 @@ export default function Main() {
                           <TouchableOpacity style={{backgroundColor: "coral",
                                                     borderRadius: 8,
                                                     paddingLeft: 15,
-                                                    paddingRight: 15,}}>
+                                                    paddingRight: 15,}}
+                                            onPress={() => removeItemAtIndex(index)}>
                               <Text style={{fontSize:16,
                                             fontWeight:'bold',
                                             color: 'white'}}> 
                                 Remove <FontAwesomeIcon icon={faMinus} style={{color: "white",}} /> </Text>
                           </TouchableOpacity>
                         </Text>
-                        {Object.entries(item.topFour).map(([key, value], index) => (
-                          <View key={index} style={styles.bullet}>
+                        {Object.entries(item.topFour).map(([key, value], index1) => (
+                          <View key={index1} style={styles.bullet}>
                             <Text
                               style={{
                                 fontSize: 16,
@@ -295,7 +298,7 @@ export default function Main() {
                                                         paddingLeft: 15,
                                                         paddingRight: 15,
                                                       }}
-                                                onPress={() => swapFeatures(item, key, index)}
+                                                onPress={() => swapFeatures(item, key, index, index1)}
                                                       
                                                       >
                               <Text style={{fontSize:16,
@@ -372,12 +375,20 @@ const styles = StyleSheet.create({
         backgroundColor: "darkgreen",
         borderRadius: 10,
         alignItems: "center",
-        height: 40
+        height: 40,
     },
+    addFeatureButton: {
+      backgroundColor: "darkgreen",
+      borderRadius: 10,
+      alignItems: "center",
+      height: 40,
+      width: 200
+  },
     removeFeatureButton: {
       backgroundColor: "coral",
       borderRadius: 10,
       alignItems: "center",
+      width: 200,
       height: 40
     },
     generateButton: {
