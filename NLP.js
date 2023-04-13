@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { forEach } from 'jszip';
 
 export const processText = async (userRequests, fileNameMappings, boolMap) => {
 
@@ -85,7 +84,6 @@ export const makePrediction = async (entry, fileNameMappings, boolMap) => {
         console.error(error);
       }
 }
-
 
 
 
