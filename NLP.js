@@ -49,13 +49,37 @@ export const makePrediction = async (entry, fileNameMappings, boolMap) => {
     
       try {
         const response = await axios.request(options);
-        //console.log(response.data.classifications);
-        const predictions = response.data.classifications.map((classification) => classification.prediction);
-        //console.log(predictions)
-        const mappedPredictions = predictions.map((prediction) => fileNameMappings[prediction]);
-        const mappedBools = mappedPredictions.map((fileName) =>boolMap[fileName]);
-        //console.log(mappedPredictions)
-        return {predictions, mappedPredictions, mappedBools};
+        console.log(response.data.classifications);//[0].labels["Calculator"]);
+        const prediction = response.data.classifications[0].prediction;//.map((classification) => classification.prediction);       
+        const classes = response.data.classifications;
+        delete classes[0].labels[prediction]
+
+        // Create an array from the labels object
+        const labelsArray = Object.entries(classes[0].labels);
+
+        // Sort the labels by confidence in descending order
+        labelsArray.sort((a, b) => b[1].confidence - a[1].confidence);
+        
+        // Get the top 4 categories
+        const topFour = labelsArray.slice(0, 2);
+
+        // Create a new dictionary with the top 4 categories
+        const topFourDict = Object.fromEntries(topFour);
+        
+        console.log(topFourDict);
+        const result = {'prediction': prediction, 'topFour': topFourDict}
+        console.log(result)
+      //   let maxConfidence = 0;
+      //   const similarPredictions = {};
+      //   let count = 0;
+      //   Object.keys(response.data.classifications[0].labels).forEach((key, value) => {
+      //     if (parseInt(value) > maxConfidence) {
+      //       maxConfidence = parseInt(value);
+      //     }
+      // });
+        //console.log(maxConfidence);
+
+        return result;//, mappedPredictions, mappedBools};
       } catch (error) {
         console.error(error);
       }

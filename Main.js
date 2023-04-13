@@ -5,6 +5,9 @@ import Firebase from "./firebase";
 import modifyFile from "./ModifyFile"
 import {processText, makePrediction} from "./NLP";
 import Lottie from 'lottie-react';
+import setSelectedFeatures from "./SetSelectedFeatures";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faSolid,faCheck, faPlus, faMinus, faRetweet} from "@fortawesome/free-solid-svg-icons";
 
 export default function Main() {
     
@@ -80,9 +83,9 @@ export default function Main() {
     const [translatedRequests, setTranslatedRequests] = useState([]);
     const [isLoading, setIsLoading] = useState(false); 
     console.log(url);
-
+    const [loadingItemIndex, setLoadingItemIndex] = useState(0);
     const [predictions, setPredictions] = useState([]);
-
+    const [nextBest, setNextBest] = useState([]);
     // 
 
     var[defaultText, EnterText] = useState('');
@@ -93,27 +96,57 @@ export default function Main() {
       redirect('')
       setFeatures(arr => [...arr, inputText])
       setUserRequests(arr => [...arr, inputText])
-      //getPrediction(inputText, fileNameMappings, boolMappings)
+      console.log('User requests length: %d', userRequests.length)
+      if (userRequests.length === 0)
+      {
+        console.log('checked')
+        setLoadingItemIndex(0);
+        console.log('%d', loadingItemIndex)
+      }
+      else {
+        setLoadingItemIndex(userRequests.length-1)
+      }
+      setUserRequests(arr => arr.slice(1))
+      predict(inputText); 
+    }
+
+    const swapFeatures = (item, key, index, index1) => {
+      const updatedNextBest = JSON.parse(JSON.stringify(item));
+      const mainPrediction = item.prediction;
+      const featureToSwap = key;
+
+      updatedNextBest.prediction = featureToSwap;
+      updatedNextBest.topFour[mainPrediction] = {confidence:1};
+      delete updatedNextBest.topFour[featureToSwap];
+      
+      const temp1 = [...nextBest];
+      temp1[index] = updatedNextBest;
+      
+      setNextBest(temp1);
+      //swap within master feature list
+      const temp2 = [...translatedRequests];
+      // console.log(index);
+      // console.log(featureToSwap);
+      // console.log("temp2")
+      // console.log(temp2);
+      temp2[index] = featureToSwap;
+      // console.log("new temp2");
+      // console.log(temp2);
+      setTranslatedRequests([...temp2]);
+      //console.log(translatedRequests);
+
     }
 
     const removeFeature = () => {
-        let featureToRemove = selectedFeatures.slice(-1)[0] 
-        switch (featureToRemove)
-        {
-          case "Google Sign-in":
-            set1(false)
-          case "Weather":
-            set2(false)
-          case "Calendar":
-            set3(false)
-          case "People Page":
-            set4(false)
-          case "FAQ Page":
-            set5(false)
-        }
-        setFeatures(arr => arr.slice(0, -1))
-        setFiles(arr => arr.slice(0, -1))
-        setBools(arr => arr.slice(0, -1))
+
+    }
+
+    const clearAll = () => {
+        setNextBest([])
+        setFeatures([])
+        setFiles([])
+        setBools([])
+        setTranslatedRequests([])
     }
 
     const getFeaturesToExclude = () => {
@@ -137,9 +170,29 @@ export default function Main() {
     const generateApp = async () => {
       setIsLoading(true); // set loading to true
       console.log("Starting loading");
-      await generateRequestFromFiles(seturl, selectedBools, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings);
-      setIsLoading(false); // set loading back to false
+      const bools = translatedRequests.map(feature => {
+        const fileName = fileNameMappings[feature];
+        return boolMappings[fileName];
+      });
+      
+      setBools(arr => [...arr, bools]);
+      console.log(selectedBools);
+      await generateRequestFromFiles(seturl, selectedBools);//, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings);
+      setIsGenerating(false); // set loading back to false
     };
+
+    const predict = async (input) => {
+      console.log("getting prediction");
+        // Code to be executed asynchronously after 3 seconds
+      await getPrediction(setTranslatedRequests, input, fileNameMappings, boolMappings, setBools, setNextBest);
+      console.log("got prediction");
+    }
+
+    const removeItemAtIndex = (index) => {
+      console.log()
+      setNextBest(arr => [...arr.slice(0, index), ...arr.slice(index + 1)]);
+      setFeatures(arr => [...arr.slice(0, index), ...arr.slice(index + 1)]);
+    }
 
     return (
         <View style={styles.container}>
@@ -170,11 +223,11 @@ export default function Main() {
                     </TextInput>
 
                     <View style = {{flexDirection:'row', justifyContent:'space-evenly'}}>
-                      <TouchableOpacity style = {styles.confirmButton} onPress={() => addFeature(defaultText)}>
+                      <TouchableOpacity style = {styles.addFeatureButton} onPress={() => addFeature(defaultText)}>
                           <Text style = {styles.textStyle}>    Add  Feature    </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style = {styles.removeFeatureButton} onPress={() => removeFeature()}>
-                          <Text style = {styles.textStyle}>    Remove Feature    </Text>
+                      <TouchableOpacity style = {styles.removeFeatureButton} onPress={() => clearAll()}>
+                          <Text style = {styles.textStyle}>    Restart    </Text>
                       </TouchableOpacity>
                     </View>
 
@@ -219,21 +272,63 @@ export default function Main() {
                              {"\n"} If any don't seem right, you can add more or remove any
                              {"\n"} using the +/- buttons.          
                     </Text>
-                    <FlatList
-                          data = {translatedRequests}
-                          renderItem={({ item }) => (
-                            <View style={styles.bullet}>
-                              <Text style={
-                                { fontSize: 18,
-                                  color: "#000",
-                                  marginLeft: 15,
-                                  fontWeight: "600",
-                                } 
-                            }>&#8226; {item}</Text>
-                            </View>
-                          )}
-                          keyExtractor={(item, index) => index.toString()}
-                      />  
+                    
+                  <FlatList
+                    data={nextBest}
+                    renderItem={({ item, index }) => (
+                      <View style={styles.bullet}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "#000",
+                            marginLeft: 15,
+                            fontWeight: "600",
+                          }}
+                        >
+                          &#8226; {item.prediction} {"  "}
+                          <TouchableOpacity style={{backgroundColor: "coral",
+                                                    borderRadius: 8,
+                                                    paddingLeft: 15,
+                                                    paddingRight: 15,}}
+                                            onPress={() => removeItemAtIndex(index)}>
+                              <Text style={{fontSize:16,
+                                            fontWeight:'bold',
+                                            color: 'white'}}> 
+                                Remove <FontAwesomeIcon icon={faMinus} style={{color: "white",}} /> </Text>
+                          </TouchableOpacity>
+                        </Text>
+                        {Object.entries(item.topFour).map(([key, value], index1) => (
+                          <View key={index1} style={styles.bullet}>
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                color: "#000",
+                                marginLeft: 30,
+                                fontWeight: "500",
+                              }}
+                            >
+                              &#8226; Did you mean {key}? {"  "}
+                              <TouchableOpacity style={{backgroundColor: "darkgreen",
+                                                        borderRadius: 8,
+                                                        paddingLeft: 15,
+                                                        paddingRight: 15,
+                                                      }}
+                                                onPress={() => swapFeatures(item, key, index, index1)}
+                                                      
+                                                      >
+                              <Text style={{fontSize:16,
+                                            fontWeight:'bold',
+                                            color: 'white'}}> 
+                                Yes <FontAwesomeIcon icon={faRetweet} style={{color: "white",}} /> </Text>
+                            </TouchableOpacity>
+                            </Text>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+                    keyExtractor={(item, index) => index.toString()}
+                  />
+
                       
                       <View style = {styles.generateDownloadAppContainer}>
                         {url ? (
@@ -276,14 +371,20 @@ async function generateRequestFromFiles(seturl, fileList, userRequests, setTrans
 
 }
 
-// async function getPrediction(test, setTest, fileNameMappings, boolMappings){
-//     const {prediction, mappedPredictions, mappedBools} = await makePrediction(test, fileNameMappings, boolMappings);
-//     setTranslatedRequests(arr => [...arr, prediction])
-//     console.log(predictions)
-//     console.log(mappedPredictions)
-//     console.log(mappedBools)
-    
-// }
+async function getPrediction(setTranslatedRequests, userRequests, fileNameMappings, boolMappings, setBools, setNextBest){
+  const predictions = await makePrediction(userRequests, fileNameMappings, boolMappings);
+  setNextBest(arr => [...arr, predictions])
+  const prediction = predictions['prediction']
+
+  console.log(prediction);
+  setTranslatedRequests(arr => [...arr, prediction])
+
+  const fileName = fileNameMappings[prediction];
+  setBools(arr => [...arr, boolMappings[fileName]]);
+  
+  console.log(boolMappings[fileName]);
+  
+}
 
   
 const styles = StyleSheet.create({
@@ -294,12 +395,20 @@ const styles = StyleSheet.create({
         backgroundColor: "darkgreen",
         borderRadius: 10,
         alignItems: "center",
-        height: 40
+        height: 40,
     },
+    addFeatureButton: {
+      backgroundColor: "darkgreen",
+      borderRadius: 10,
+      alignItems: "center",
+      height: 40,
+      width: 200
+  },
     removeFeatureButton: {
       backgroundColor: "coral",
       borderRadius: 10,
       alignItems: "center",
+      width: 200,
       height: 40
     },
     generateButton: {
