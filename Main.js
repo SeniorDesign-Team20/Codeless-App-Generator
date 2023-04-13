@@ -6,6 +6,8 @@ import modifyFile from "./ModifyFile"
 import {processText, makePrediction} from "./NLP";
 import Lottie from 'lottie-react';
 import setSelectedFeatures from "./SetSelectedFeatures";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faSolid,faCheck, faPlus, faMinus, faRetweet} from "@fortawesome/free-solid-svg-icons";
 
 export default function Main() {
     
@@ -81,9 +83,9 @@ export default function Main() {
     const [translatedRequests, setTranslatedRequests] = useState([]);
     const [isLoading, setIsLoading] = useState(false); 
     console.log(url);
-
+    const [loadingItemIndex, setLoadingItemIndex] = useState(0);
     const [predictions, setPredictions] = useState([]);
-
+    const [nextBest, setNextBest] = useState([]);
     // 
 
     var[defaultText, EnterText] = useState('');
@@ -369,14 +371,20 @@ async function generateRequestFromFiles(seturl, fileList, userRequests, setTrans
 
 }
 
-// async function getPrediction(test, setTest, fileNameMappings, boolMappings){
-//     const {prediction, mappedPredictions, mappedBools} = await makePrediction(test, fileNameMappings, boolMappings);
-//     setTranslatedRequests(arr => [...arr, prediction])
-//     console.log(predictions)
-//     console.log(mappedPredictions)
-//     console.log(mappedBools)
-    
-// }
+async function getPrediction(setTranslatedRequests, userRequests, fileNameMappings, boolMappings, setBools, setNextBest){
+  const predictions = await makePrediction(userRequests, fileNameMappings, boolMappings);
+  setNextBest(arr => [...arr, predictions])
+  const prediction = predictions['prediction']
+
+  console.log(prediction);
+  setTranslatedRequests(arr => [...arr, prediction])
+
+  const fileName = fileNameMappings[prediction];
+  setBools(arr => [...arr, boolMappings[fileName]]);
+  
+  console.log(boolMappings[fileName]);
+  
+}
 
   
 const styles = StyleSheet.create({
