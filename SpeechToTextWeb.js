@@ -32,7 +32,7 @@ const pulsatingCircleStyle = {
 
   
 
-export default function SpeechToTextWeb() {
+export default function SpeechToTextWeb( {onTranscriptChange}) {
   const [transcript, setTranscript] = useState('');
   const recognitionRef = useRef(null);
   const [isListening, setIsListening] = useState(false);
@@ -53,6 +53,10 @@ export default function SpeechToTextWeb() {
       const last = event.results.length - 1;
       const text = event.results[last][0].transcript;
       setTranscript(text);
+
+      if (typeof onTranscriptChange === 'function') {
+        onTranscriptChange(text);
+      }
     };
 
     recognition.onerror = (event) => {
@@ -67,6 +71,8 @@ export default function SpeechToTextWeb() {
     setIsListening(true);
     recognition.start();
 
+    return transcript;
+
   };
 
 
@@ -77,13 +83,21 @@ export default function SpeechToTextWeb() {
     setIsListening(false);
   };
 
+  const clear = () => {
+    setTranscript('');
+    if (typeof onTranscriptChange === 'function') {
+      onTranscriptChange('');
+    }
+  };
+
 
 return (
     <div>
       <button onClick={startListening}>Start Listening</button>
       <button onClick={stopListening}>Stop Listening</button>
+      <button onClick={clear}>Clear</button>
       {isListening && <div style={pulsatingCircleStyle}></div>}
-      <p>Transcript: {transcript}</p>
+      {/* <p>Transcript: {transcript}</p> */}
     </div>
   );
 }

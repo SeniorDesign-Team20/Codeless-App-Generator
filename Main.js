@@ -532,14 +532,6 @@ import * as Permissions from 'expo-permissions';
 import SpeechToTextWeb from './SpeechToTextWeb';
 
 
-
-
-
-//import * as Speech from 'expo-speech';
-// import * as Permissions from 'expo-permissions';
-//import { requestPermissionsAsync, isAvailableAsync, startRecordingAsync, stopRecordingAsync, getTranscriptionAsync } from 'expo-voice';
-// import * as SpeechToText from 'expo-speech-to-text';
-
 export default function Main() {
     
     const fileNameMappings = {
@@ -613,77 +605,28 @@ export default function Main() {
     const [userRequests, setUserRequests] = useState([]);
     const [translatedRequests, setTranslatedRequests] = useState([]);
     const [isLoading, setIsLoading] = useState(false); 
+    const [transcript, setTranscript] = useState('');
     console.log(url);
 
     const [predictions, setPredictions] = useState([]);
 
-
-
-    // //SPEECH TO TEXT
-    // const [result, setResult] = useState('');
-    // const [isNowLoading, setNowLoading] = useState(false);
-
-    // const speechStartHandler = e => {
-    //   console.log('speechStart successful', e);
-    // };
-  
-    // const speechEndHandler = e => {
-    //   setIsLoading(false);
-    //   console.log('stop handler', e);
-    // };
-  
-    // const speechResultsHandler = e => {
-    //   const text = e.value[0];
-    //   setResult(text);
-    // };
-  
-    // const startRecording = async () => {
-    //   setIsLoading(true);
-    //   try {
-    //     await Voice.start('en-Us');
-    //   } catch (error) {
-    //     console.log('error', error);
-    //   }
-    // };
-  
-    // const stopRecording = async () => {
-    //   try {
-    //     await Voice.stop();
-    //     setLoading(false);
-    //   } catch (error) {
-    //     console.log('error', error);
-    //   }
-    // };
-  
-    // const clear = () => {
-    //   setResult('');
-    // };
-
-
-    // useEffect(() => {
-    //   Voice.onSpeechStart = speechStartHandler;
-    //   Voice.onSpeechEnd = speechEndHandler;
-    //   Voice.onSpeechResults = speechResultsHandler;
-    //   return () => {
-    //     Voice.destroy().then(Voice.removeAllListeners);
-    //   };
-    // }, []);
-
-
-
-
-
-    // 
-
     var[defaultText, EnterText] = useState('');
 
+    const handleTranscriptChange = (newTranscript) => {
+      setTranscript(newTranscript);
+    };
+
     const addFeature = (inputText) => {
-      if (inputText == "" || inputText == " ")
+
+      const featureToAdd = transcript !== "" ? transcript : inputText;
+
+      if (featureToAdd == "" || featureToAdd == " ")
         return  
       redirect('')
-      setFeatures(arr => [...arr, inputText])
-      setUserRequests(arr => [...arr, inputText])
+      setFeatures(arr => [...arr, featureToAdd])
+      setUserRequests(arr => [...arr, featureToAdd])
       //getPrediction(inputText, fileNameMappings, boolMappings)
+      setTranscript('');
     }
 
     const removeFeature = () => {
@@ -730,75 +673,6 @@ export default function Main() {
       await generateRequestFromFiles(seturl, selectedBools, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings);
       setIsLoading(false); // set loading back to false
     };
-
-
-
-    // async function startSpeechRecognition() {
-    //   try {
-    //     await Speech.stop();
-    //     await Speech.requestPermissionsAsync();
-    //     await Speech.isAvailableAsync();
-    //     const { uri } = await Speech.recordAsync();
-    //     const transcription = await Speech.recognizeAsync({ uri });
-    //     console.log(transcription);
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // }
-
-    // async function startSpeechRecognition() {
-    //   try {
-    //     const { status } = await SpeechToText.requestPermissionsAsync();
-    //     if (status === 'granted') {
-    //       if (await SpeechToText.isAvailableAsync()) {
-    //         const { uri } = await SpeechToText.startRecordingAsync();
-    //         await SpeechToText.stopRecordingAsync();
-    //         const transcription = await SpeechToText.getTranscriptionAsync(uri);
-    //         console.log(transcription);
-    //       } else {
-    //         console.log('Speech-to-text not available.');
-    //       }
-    //     } else {
-    //       console.log('Microphone permission not granted!');
-    //     }
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // }
-
-    // async function checkSpeechToTextAvailability() {
-    //   const isAvailable = await SpeechToText.isAvailableAsync();
-    //   if (!isAvailable) {
-    //     alert('Speech to text is not available on this device');
-    //   }
-    // }
-
-
-    // async function startSpeechRecognition() {
-    //   try {
-    //     await Speech.speak('Speak now');
-    //     const result = await SpeechToText.recognizeAsync({});
-    //     if (result) {
-    //       setRecognizedText(result.text);
-    //     }
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // }
-
-
-    // async function startSpeechRecognition() {
-    //   try {
-    //     const spokenText = await RNSTT.startSpeech('Speak now');
-    //     console.log(spokenText);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // }
-    
-    
-    
-    
     
 
 
@@ -822,6 +696,9 @@ export default function Main() {
                     <Checkbox
                       title="4. Download your app in a .zip"
                     />
+                    <Text style = {styles.recognizedTextStyle}> {'\n'} Text to Speech Input here: {'\n'} </Text>
+                    <SpeechToTextWeb onTranscriptChange={handleTranscriptChange} />
+                    <Text> Transcript: {transcript} </Text>
                     <TextInput
                       style = {styles.enter}
                       placeholder ="Enter a feature here ... "
@@ -915,7 +792,6 @@ export default function Main() {
               <View style = {styles.displaySelectionContainer}>
               </View>
             </View>
-            <SpeechToTextWeb />
         </View>
         
         
