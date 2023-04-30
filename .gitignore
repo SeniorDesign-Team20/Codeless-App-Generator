@@ -12,3 +12,8 @@ web-build/
 .env
 # macOS
 .DS_Store
+.vs/VSWorkspaceState.json
+.vs/slnx.sqlite
+.vs/Codeless-App-Generator/v17/.wsuo
+.vs/Codeless-App-Generator/FileContentIndex/40a17395-192b-405e-8974-0b4372526f4f.vsidx
+.vs/Codeless-App-Generator/FileContentIndex/27b5e2a9-aea4-4b69-a6ec-e24bd7021db9.vsidx

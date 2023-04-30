@@ -1,11 +1,4 @@
 export default function setSelectedFeatures(featureFiles) {
-    // const fileNameMappings = {
-    //     "Google Sign-In": "Google_Login",
-    //     "Weather": "Weather",
-    //     "Calender" : "Calender",
-    //     "People Page": "People",
-    //     "FAQ Page": "FAQs.js"
-    //   };
     const selectedFeatures = {
         "googleLogin": false,
         "weather": false,

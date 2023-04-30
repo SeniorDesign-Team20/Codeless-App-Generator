@@ -9,8 +9,7 @@ import { Speech, isAvailableAsync } from 'expo-speech';
 import Voice from '@react-native-community/voice';
 import * as Permissions from 'expo-permissions';
 import SpeechToTextWeb from './SpeechToTextWeb';
-//import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-//import {faMinus, faRetweet} from "@fortawesome/free-solid-svg-icons";
+
 
 export default function Main() {
     
@@ -215,20 +214,13 @@ export default function Main() {
         <View style={styles.container}>
             <View style = {styles.contentContainer}>
               <View syle={styles.chooseFeaturesContainer}>
-                    <Checkbox
-                      //onPress = {() =>{setFeat1(feature1)}}
-                      title="1. Enter what features you would like to be in your app below"
-                      isChecked={feature1}
-                    />
-                    <Checkbox
-                      title="2. Confirm your entries to get the available features"
-                    />
-                    <Checkbox
-                      title="3. Generate your app"
-                    />
-                    <Checkbox
-                      title="4. Download your app in a .zip"
-                    />
+                <View style={styles.instructionsContainer}>
+                  <Text style={styles.instructions}> 1. Enter what features you would like to be in your app below {'\n'} </Text>
+                  <Text style={styles.instructions}> 2. Confirm your entries to get the available features {'\n'} </Text>
+                  <Text style={styles.instructions}> 3. Generate your app {'\n'} </Text>
+                  <Text style={styles.instructions}> 4. Download your app in a .zip </Text>
+                </View>
+
                     <Text style = {styles.recognizedTextStyle}> {'\n'} Text to Speech Input here: {'\n'} </Text>
                     <SpeechToTextWeb onTranscriptChange={handleTranscriptChange} />
                     <Text> Transcript: {transcript} </Text>
@@ -410,6 +402,20 @@ export default function Main() {
 
   
 const styles = StyleSheet.create({
+  instructionsContainer: {
+    justifyContent: "flex-start",
+    alignContent: "center",
+    flexDirection: "column",
+    width: 740,
+    marginTop: 10,
+    marginHorizontal: 5,
+},
+    instructions:{
+        fontSize: 18,
+        color: "#000",
+        marginLeft: 5,
+        fontWeight: "600",
+    },
     bullet: {
         paddingTop: 25
     },
