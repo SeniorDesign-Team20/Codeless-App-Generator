@@ -24,7 +24,7 @@ initializeApp(firebaseConfig);
 WebBrowser.maybeCompleteAuthSession();
 
 export default function App() {
-  const [isSignedIn, setIsSignedIn] = React.useState(true);
+  const [isSignedIn, setIsSignedIn] = React.useState(false);
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
     {
       clientId: '201718739843-ocjvk939h3litgm9nsqrco7k4jnr39fq.apps.googleusercontent.com',
