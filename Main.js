@@ -1,7 +1,7 @@
 import { StyleSheet, View, Alert, FlatList, Button, Text, TextInput, TouchableOpacity, Linking } from "react-native";
 import { useState, useEffect } from "react";
 import Checkbox from "./CheckBox";
-import Firebase from "./firebase";
+import Firebase from "./data";
 import modifyFile from "./ModifyFile"
 import {processText, makePrediction} from "./NLP";
 import Lottie from 'lottie-react';
@@ -388,7 +388,7 @@ export default function Main() {
       await modifyFile(selectedBools);
       //console.log(translatedRequests);
       //setPredictions(translatedRequests.)
-      await Firebase('GeneratedApp1', []).then((res) => {
+      await Firebase('GeneratedApp', []).then((res) => {
           seturl(res);
       }, []);
   

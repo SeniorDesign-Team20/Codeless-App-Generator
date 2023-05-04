@@ -25,7 +25,7 @@ async function modifyFile(fileList) {
 
     // The name of the JSON file to be modified
     const fileDirectory = 'DefaultSelectFeatures/selectedFeatures.js';  
-    const fileName = 'GeneratedApp1/selectedFeatures.js'
+    const fileName = 'GeneratedApp/selectedFeatures.js'
     
     const defaultFileRef = ref(storage,fileDirectory);
     const updatedFileRef = ref(storage,fileName);
