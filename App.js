@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   welcomenote:{
       textAlign: "center",
-      fontSize:18,
+      fontSize:30,
       fontWeight:'bold',
       color: 'white',
       paddingBottom: 30
