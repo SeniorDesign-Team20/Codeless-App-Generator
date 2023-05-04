@@ -4,6 +4,7 @@ import { initializeApp } from "firebase/app";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import axios from 'axios'
 import setSelectedFeatures from './SetSelectedFeatures';
+import { v4 as uuidv4 } from 'uuid';
 
 const firebaseConfig = {
     apiKey: "${{ secrets.FIREBASEAPIKEY }}",
@@ -17,15 +18,15 @@ const firebaseConfig = {
 
 // Modify the file's boolean variables
 // Modify the file's boolean variables
-async function modifyFile(fileList, setStatus) {
-    const featureChoices = setSelectedFeatures(fileList)
+async function generateIdFile(setStatus) {
+    //const featureChoices = setSelectedFeatures(fileList)
     const modifyapp = initializeApp(firebaseConfig);
 
     const storage = getStorage(modifyapp);
 
     // The name of the JSON file to be modified
-    const fileDirectory = 'DefaultSelectFeatures/selectedFeatures.js';  
-    const fileName = 'GeneratedApp1/selectedFeatures.js'
+    const fileDirectory = 'DefaultAppID/app_identifier.js';  
+    const fileName = 'GeneratedApp1/layout/app_identifier.js'
 
     const defaultFileRef = ref(storage,fileDirectory);
     const updatedFileRef = ref(storage,fileName);
@@ -47,21 +48,17 @@ async function modifyFile(fileList, setStatus) {
       .catch(error => {
         console.error(error);
       })
-      };
+    };
     
-
+    const uniqueId = uuidv4();
     //   let fileContents = await response.text();
     await contentpromises(fileName)
     .then(async fileContent => {
         console.log('original file contents:');
         console.log(fileContent);
-        for (const element in featureChoices) {
-          //const featureName = element.replace(/\.js$/, "");
-          if (featureChoices[element]){
-            fileContent = fileContent.replace(`export const include_${element} = false;`, `export const include_${element} = ${featureChoices[element]};`);
-          }
 
-        }
+        fileContent = fileContent.replace(`export const app_id = ""`, `export const app_id = "${uniqueId}"`);
+          
         console.log('new file contents:');
         console.log(fileContent);
         const encoder = new TextEncoder();
@@ -72,8 +69,8 @@ async function modifyFile(fileList, setStatus) {
     .catch(error => {
         console.error(error);
     });
-    setStatus("Customizing your app . . .")
+    setStatus("Generating a unique id . . .")
 
 }
 
-export default modifyFile;
+export default generateIdFile;

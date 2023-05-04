@@ -13,7 +13,7 @@ const firebaseConfig = {
       appId: "${{ secrets.APPID }}"
 };
 
-const Firebase = async (folderName, excludedFeatures) => {
+const Firebase = async (folderName, excludedFeatures, setStatus) => {
   // Initialize Firebase
   const app2 = initializeApp(firebaseConfig, 'app2');
   // Initialize Cloud Storage and get a reference to the service
@@ -69,7 +69,7 @@ const Firebase = async (folderName, excludedFeatures) => {
   }
 
   await downloadFiles(folderRef, `${folderName}/`);
-
+  setStatus("Gathering your files . . .")
   // generate the zip file as a blob and upload it to Firebase Storage
   const zipBlob = await zip.generateAsync({ type: 'blob' });
   const zipRef = ref(storage, `${folderName}.zip`);

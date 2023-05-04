@@ -9,8 +9,11 @@ import { Speech, isAvailableAsync } from 'expo-speech';
 import Voice from '@react-native-community/voice';
 import * as Permissions from 'expo-permissions';
 import SpeechToTextWeb from './SpeechToTextWeb';
-
-
+import generateIdFile from "./GenerateIdFile";
+// const nlpFeatures = ["About Page", "Activity Feed", "Application Page", "Calculator", "Calendar", "Chatbot",
+// "Contact Form", "Discussion Forum", "FAQ Page", "File Upload", "Google Sign-in", "Job Openings", 
+// "Map", "Menu", "Online Store", "People Page", "Photobooth", "Privacy Policy", "QR Code Scanner", 
+// "Reviews", "Weather"];
 export default function Main() {
     
     const fileNameMappings = {
@@ -38,11 +41,8 @@ export default function Main() {
       "FAQ Page": "FAQs"
     };
 
-    const nlpFeatures = ["About Page", "Activity Feed", "Application Page", "Calculator", "Calendar", "Chatbot",
-                         "Contact Form", "Discussion Forum", "FAQ Page", "File Upload", "Google Sign-in", "Job Openings", 
-                         "Map", "Menu", "Online Store", "People Page", "Photobooth", "Privacy Policy", "QR Code Scanner", 
-                         "Reviews", "Weather"];
 
+    const [counter, setCounter] = useState(0);
     const boolMappings = {
       "Google_Login": "googleLogin",
       "Weather": "weather",
@@ -86,10 +86,12 @@ export default function Main() {
     const [isLoading, setIsLoading] = useState(false); 
     const [transcript, setTranscript] = useState('');
     console.log(url);
-
+    
     const [loadingItemIndex, setLoadingItemIndex] = useState(0);
     const [predictions, setPredictions] = useState([]);
     const [nextBest, setNextBest] = useState([]);
+
+    const [status, setStatus] = useState('');
 
     var[defaultText, EnterText] = useState('');
 
@@ -184,7 +186,7 @@ export default function Main() {
     
     const generateApp = async () => {
       setIsLoading(true); // set loading to true
-      console.log("Starting loading");
+      setStatus("Processing your requests . . .")
       const bools = translatedRequests.map(feature => {
         const fileName = fileNameMappings[feature];
         return boolMappings[fileName];
@@ -192,7 +194,8 @@ export default function Main() {
       
       setBools(arr => [...arr, bools]);
       console.log(selectedBools);
-      await generateRequestFromFiles(seturl, selectedBools);//, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings);
+      
+      await generateRequestFromFiles(seturl, selectedBools, setStatus);//, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings);
       //setIsGenerating(false); // set loading back to false
       setIsLoading(false);
     };
@@ -200,7 +203,7 @@ export default function Main() {
     const predict = async (input) => {
       console.log("getting prediction");
         // Code to be executed asynchronously after 3 seconds
-      await getPrediction(setTranslatedRequests, input, fileNameMappings, boolMappings, setBools, setNextBest);
+      await getPrediction(setTranslatedRequests, input, fileNameMappings, boolMappings, setBools, setNextBest, counter, setCounter);
       console.log("got prediction");
     }
 
@@ -210,66 +213,58 @@ export default function Main() {
       setFeatures(arr => [...arr.slice(0, index), ...arr.slice(index + 1)]);
     }
 
-        return (
+    return (
         <View style={styles.container}>
             <View style = {styles.contentContainer}>
-              <View syle={styles.chooseFeaturesContainer}>
-                <View style={styles.instructionsContainer}>
-                  <Text style={styles.instructions}> 1. Enter what features you would like to be in your app below {'\n'} </Text>
-                  <Text style={styles.instructions}> 2. Confirm your entries to get the available features {'\n'} </Text>
-                  <Text style={styles.instructions}> 3. Generate your app {'\n'} </Text>
-                  <Text style={styles.instructions}> 4. Download your app in a .zip </Text>
-                </View>
-
-                    <Text style = {styles.recognizedTextStyle}> {'\n'} Text to Speech Input here: {'\n'} </Text>
-                    <SpeechToTextWeb onTranscriptChange={handleTranscriptChange} />
-                    <Text> Transcript: {transcript} </Text>
-                    <TextInput
-                      style = {styles.enter}
-                      placeholder ="Enter a feature here ... "
-                      value = {defaultText}
-                      onFocus={() => EnterText('')}
-                      onChangeText={(text) => EnterText(text)}
-                      onSubmitEditing = {() => addFeature(defaultText)}
-                      >
-                    </TextInput>
-
-                    <View style = {{flexDirection:'row', justifyContent:'space-evenly'}}>
-                      <TouchableOpacity style = {styles.addFeatureButton} onPress={() => addFeature(defaultText)}>
-                          <Text style = {styles.textStyle}>    Add  Feature    </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style = {styles.removeFeatureButton} onPress={() => clearAll()}>
-                          <Text style = {styles.textStyle}>    Restart    </Text>
-                      </TouchableOpacity>
+                <View syle={styles.chooseFeaturesContainer}>
+                    <View style={styles.instructionsContainer}>
+                        <Text style={styles.instructions}> 1. Enter what features you would like to be in your app below {'\n'} </Text>
+                        <Text style={styles.instructions}> 2. Confirm your entries to get the available features {'\n'} </Text>
+                        <Text style={styles.instructions}> 3. Generate your app {'\n'} </Text>
+                        <Text style={styles.instructions}> 4. Download your app in a .zip </Text>
+                        <Text style = {styles.recognizedTextStyle}> 
+                            {'\n'} Text to Speech Input here: {'\n'} 
+                        </Text>
+                        <SpeechToTextWeb onTranscriptChange={handleTranscriptChange} />
+                        <Text> Transcript: {transcript} </Text>
+                        <TextInput
+                          style = {styles.enter}
+                          placeholder ="Enter a feature here ... "
+                          value = {defaultText}
+                          onFocus={() => EnterText('')}
+                          onChangeText={(text) => EnterText(text)}
+                          onSubmitEditing = {() => addFeature(defaultText)}
+                          >
+                        </TextInput>
+                        <View style = {{flexDirection:'row', justifyContent:'space-evenly'}}>
+                            <TouchableOpacity style = {styles.addFeatureButton} onPress={() => addFeature(defaultText)}>
+                                <Text style = {styles.textStyle}>    Add  Feature    </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style = {styles.removeFeatureButton} onPress={() => clearAll()}>
+                                <Text style = {styles.textStyle}>    Restart    </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-
                     <FlatList
-                        data = {selectedFeatures}
-                        renderItem={({ item }) => (
-                          <View style={styles.bullet}>
-                            <Text style={
-                              { fontSize: 18,
-                                color: "#000",
-                                marginLeft: 15,
-                                fontWeight: "600",
-                              } 
-                          }>&#8226; {item}</Text>
-                          </View>
-                        )}
-                        keyExtractor={(item, index) => index.toString()}
+                      data = {selectedFeatures}
+                      renderItem={({ item }) => (
+                        <View style={styles.bullet}>
+                            <Text style={styles.enteredText}>&#8226; {item}</Text>
+                        </View>
+                      )} keyExtractor={(item, index) => index.toString()}
                     />
                     
                     <View style = {styles.confirmSelectionsButton}>
-                      <TouchableOpacity 
-                          style = {styles.confirmButton} 
-                          onPress={() => generateApp()}
-                      >
-                        <Text style = {styles.textStyle}> Confirm Selections </Text>
-                      </TouchableOpacity>
+                        <TouchableOpacity 
+                            style = {styles.confirmButton} 
+                            onPress={() => generateApp()}
+                        >
+                          <Text style = {styles.textStyle}> Confirm Selections </Text>
+                        </TouchableOpacity>
                     </View>
-
                 </View>
-                {isLoading ? (
+            {isLoading ? 
+            (
                 <View style={{ alignSelf: 'center', paddingLeft:200}}>
                     <Lottie
                       animationData={require('./assets/98432-loading.json')}
@@ -277,116 +272,95 @@ export default function Main() {
                       loop
                       style={{width: '75%', height: '75%'}}
                     />
-                  </View>
-                  ):(
-                <View style ={styles.nlpPredictionsContainer}>      
-                    <Text> Here are the features we think you have requested.
-                             {"\n"} If any don't seem right, you can add more or remove any
-                             {"\n"} using the +/- buttons.          
+                    <Text style={[{paddingLeft:100}, styles.Text]}>
+                      {status}
                     </Text>
-                    
-                  <FlatList
-                    data={nextBest}
-                    renderItem={({ item, index }) => (
-                      <View style={styles.bullet}>
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "#000",
-                            marginLeft: 15,
-                            fontWeight: "600",
-                          }}
-                        >
-                          &#8226; {item.prediction} {"  "}
-                          <TouchableOpacity style={{backgroundColor: "coral",
-                                                    borderRadius: 8,
-                                                    paddingLeft: 15,
-                                                    paddingRight: 15,}}
-                                            onPress={() => removeItemAtIndex(index)}>
-                              <Text style={{fontSize:16,
-                                            fontWeight:'bold',
-                                            color: 'white'}}> 
-                                Remove  </Text>
-                                {/* <FontAwesomeIcon icon={faMinus} style={{color: "white",}} /> */}
-                          </TouchableOpacity>
-                        </Text>
-                        {Object.entries(item.topFour).map(([key, value], index1) => (
-                          <View key={index1} style={styles.bullet}>
-                            <Text
-                              style={{
-                                fontSize: 16,
-                                color: "#000",
-                                marginLeft: 30,
-                                fontWeight: "500",
-                              }}
-                            >
-                              &#8226; Did you mean {key}? {"  "}
-                              <TouchableOpacity style={{backgroundColor: "darkgreen",
-                                                        borderRadius: 8,
-                                                        paddingLeft: 15,
-                                                        paddingRight: 15,
-                                                      }}
-                                                onPress={() => swapFeatures(item, key, index, index1)}
-                                                      
-                                                      >
-                              <Text style={{fontSize:16,
-                                            fontWeight:'bold',
-                                            color: 'white'}}> 
-                                Yes </Text>
-                                {/* <FontAwesomeIcon icon={faRetweet} style={{color: "white",}} /> */}
-                            </TouchableOpacity>
-                            </Text>
-                          </View>
-                        ))}
-                      </View>
-                    )}
-                    keyExtractor={(item, index) => index.toString()}
-                  />
-
-                      
-                      <View style = {styles.generateDownloadAppContainer}>
-                        {url ? (
-                            <TouchableOpacity 
-                                style = {styles.generateButton} 
-                                onPress={() => Linking.openURL(url)}
-                            >
-                              <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
-                            </TouchableOpacity>
-                          ) : (
-                            <Text>Confirm Selections to Download App...</Text>
-                          )}
-                      </View>  
                 </View>
-                  )}
-              <View style = {styles.displaySelectionContainer}>
-              </View>
+            )
+            :
+            (
+                <View style ={styles.nlpPredictionsContainer}>      
+                    <Text style ={styles.rightSideInstructions}> Here are the features we think you have requested.
+                              {"\n"} If any don't seem right, you can add more or remove any
+                              {"\n"} using the +/- buttons.          
+                    </Text>
+                    <FlatList
+                      data={nextBest}
+                      renderItem={({ item, index }) => (
+                          <View style={styles.bullet}>
+                              <Text style={{fontSize: 18, color: "#000", marginLeft: 15, fontWeight: "600",}}>
+                                  &#8226; {item.prediction} {"  "}
+                                  <TouchableOpacity style={{backgroundColor: "coral", borderRadius: 8, paddingLeft: 15, paddingRight: 15,}} 
+                                                    onPress={() => removeItemAtIndex(index)}>
+                                      <Text style={{fontSize:16, fontWeight:'bold', color: 'white'}}> Remove </Text>
+                                  </TouchableOpacity>
+                              </Text>
+                              {Object.entries(item.topFour).map(([key, value], index1) => (
+                                  <View key={index1} style={styles.bullet}>
+                                      <Text style={{fontSize: 16, color: "#000", marginLeft: 30, fontWeight: "500",}}>
+                                          &#8226; Did you mean {key}? {"  "}
+                                          <TouchableOpacity style={{backgroundColor: "darkgreen", borderRadius: 8, paddingLeft: 15,paddingRight: 15,}}
+                                                            onPress={() => swapFeatures(item, key, index, index1)}>
+                                              <Text style={{fontSize:16, fontWeight:'bold', color: 'white'}}> 
+                                                  Yes 
+                                              </Text>
+                                          </TouchableOpacity>
+                                      </Text>
+                                  </View>
+                              ))}
+                          </View>
+                      )}
+                      keyExtractor={(item, index) => index.toString()}
+                    />   
+                    <View style = {styles.generateDownloadAppContainer}>
+                    {url ? 
+                    (
+                        <TouchableOpacity style = {styles.generateButton} onPress={() => Linking.openURL(url)}>
+                            <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
+                        </TouchableOpacity>
+                    ) 
+                    : 
+                    (
+                        <Text>Confirm Selections to Download App...</Text>
+                    )}
+                    </View>  
+                </View>
+            )} 
             </View>
         </View>
-        
-        
-      );
-    }
+    );}
   
-    async function generateRequestFromFiles(seturl, selectedBools) {
+    async function generateRequestFromFiles(seturl, selectedBools, setStatus) {
       //console.log(fileList);
-      console.log('editing file...');
-  
-      // const {predictions, mappedPredictions, mappedBools} = await processText(userRequests, fileNameMappings, boolMappings);
-      // setTranslatedRequests(predictions);
-      // console.log(translatedRequests);
-      // console.log(mappedPredictions);
-      // console.log(mappedBools);
-      await modifyFile(selectedBools);
+      await modifyFile(selectedBools, setStatus);
+
+      await generateIdFile(setStatus);
       //console.log(translatedRequests);
       //setPredictions(translatedRequests.)
-      await Firebase('GeneratedApp1', []).then((res) => {
+      await Firebase('GeneratedApp1', [], setStatus).then((res) => {
           seturl(res);
       }, []);
   
   }
 
-  async function getPrediction(setTranslatedRequests, userRequests, fileNameMappings, boolMappings, setBools, setNextBest){
+//  const nlpFeatures = ["About Page", "Activity Feed", "Application Page", "Calculator", "Calendar", "Chatbot",
+// "Contact Form", "Discussion Forum", "FAQ Page", "File Upload", "Google Sign-in", "Job Openings", 
+// "Map", "Menu", "Online Store", "People Page", "Photobooth", "Privacy Policy", "QR Code Scanner", 
+// "Reviews", "Weather"];
+  async function getPrediction(setTranslatedRequests, userRequests, fileNameMappings, boolMappings, setBools, setNextBest, counter, setCounter ){
+    // Uncomment to use NLP Model
     const predictions = await makePrediction(userRequests, fileNameMappings, boolMappings);
+
+    // Uncomment to hardcode predictions
+    //  const nlpFeatures = ["About Page", "Activity Feed", "Application Page", "Calculator", "Calendar", "Chatbot",
+    // "Contact Form", "Discussion Forum", "FAQ Page", "File Upload", "Google Sign-in", "Job Openings", 
+    // "Map", "Menu", "Online Store", "People Page", "Photobooth", "Privacy Policy", "QR Code Scanner", 
+    // "Reviews", "Weather"];
+    // const predictions = {'prediction': nlpFeatures[counter], 'topFour':[{'test':'test'},{'test':'test'}]}
+    // const incr = counter + 1;
+    // setCounter(incr);
+    // END uncomment
+
     setNextBest(arr => [...arr, predictions])
     const prediction = predictions['prediction']
 
@@ -402,6 +376,12 @@ export default function Main() {
 
   
 const styles = StyleSheet.create({
+  enteredText: {
+    fontSize: 18,
+    color: "#000",
+    marginLeft: 15,
+    fontWeight: "600",
+  },
   instructionsContainer: {
     justifyContent: "flex-start",
     alignContent: "center",
@@ -409,12 +389,21 @@ const styles = StyleSheet.create({
     width: 740,
     marginTop: 10,
     marginHorizontal: 5,
-},
+    },
+    statusText: {
+
+    },
     instructions:{
         fontSize: 18,
         color: "#000",
         marginLeft: 5,
         fontWeight: "600",
+    },
+    rightSideInstructions:{
+      fontSize: 18,
+      color: "#000",
+      textAlign: 'center',
+      fontWeight: "600",
     },
     bullet: {
         paddingTop: 25
@@ -464,7 +453,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        flexDirection: "col",
+        flexDirection: "column",
         backgroundColor: "#fff",
         justifyContent: "flex-start",
         alignItems: "flex-start"
@@ -527,7 +516,7 @@ const styles = StyleSheet.create({
 
         //alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         // paddingLeft: "25%",
         paddingBottom: 50
       },

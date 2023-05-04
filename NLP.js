@@ -23,7 +23,7 @@ export const makePrediction = async (entry, fileNameMappings, boolMap) => {
       data: {
         inputs: [entry],
         truncate: 'END',
-        model: 'ce2368da-c965-4bf2-8ba1-feae8bf94899-ft',
+        model: 'cdfd17c0-f97b-4640-a4fd-5b4f50ca9e27-ft',
       },
     };
   
