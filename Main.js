@@ -9,7 +9,7 @@ import { Speech, isAvailableAsync } from 'expo-speech';
 import Voice from '@react-native-community/voice';
 import * as Permissions from 'expo-permissions';
 import SpeechToTextWeb from './SpeechToTextWeb';
-
+import generateIdFile from "./GenerateIdFile";
 
 export default function Main() {
     
@@ -89,7 +89,7 @@ export default function Main() {
     const [loadingItemIndex, setLoadingItemIndex] = useState(0);
     const [predictions, setPredictions] = useState([]);
     const [nextBest, setNextBest] = useState([]);
-
+    const [status, setStatus] = useState("");
     var[defaultText, EnterText] = useState('');
 
     const handleTranscriptChange = (newTranscript) => {
@@ -184,6 +184,7 @@ export default function Main() {
     const generateApp = async () => {
       setIsLoading(true); // set loading to true
       console.log("Starting loading");
+      setStatus("Processing your requests . . .");
       const bools = translatedRequests.map(feature => {
         const fileName = fileNameMappings[feature];
         return boolMappings[fileName];
@@ -191,8 +192,7 @@ export default function Main() {
       
       setBools(arr => [...arr, bools]);
       console.log(selectedBools);
-      await generateRequestFromFiles(seturl, selectedBools);//, userRequests, setTranslatedRequests, translatedRequests, fileNameMappings, boolMappings);
-      //setIsGenerating(false); // set loading back to false
+      await generateRequestFromFiles(seturl, selectedBools, setStatus);      //setIsGenerating(false); // set loading back to false
       setIsLoading(false);
     };
 
@@ -279,8 +279,11 @@ export default function Main() {
                       animationData={require('./assets/98432-loading.json')}
                       autoPlay
                       loop
-                      style={{}}
+                      style={{width: '75%', height: '75%'}}
                     />
+                    <Text style={[{paddingLeft:25}, styles.Text]}>
+                      {status}
+                    </Text>
                   </View>
                   ):(
                 <View style ={styles.nlpPredictionsContainer}>      
@@ -376,7 +379,7 @@ export default function Main() {
       );
     }
   
-    async function generateRequestFromFiles(seturl, selectedBools) {
+    async function generateRequestFromFiles(seturl, selectedBools, setStatus) {
       //console.log(fileList);
       console.log('editing file...');
   
@@ -384,11 +387,12 @@ export default function Main() {
       // setTranslatedRequests(predictions);
       // console.log(translatedRequests);
       // console.log(mappedPredictions);
+      await generateIdFile(setStatus)
       // console.log(mappedBools);
-      await modifyFile(selectedBools);
+      await modifyFile(selectedBools, setStatus);
       //console.log(translatedRequests);
       //setPredictions(translatedRequests.)
-      await Firebase('GeneratedApp', []).then((res) => {
+      await Firebase('GeneratedApp', [], setStatus).then((res) => {
           seturl(res);
       }, []);
   
