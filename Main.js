@@ -216,13 +216,20 @@ export default function Main() {
                 <View style={styles.instructionsContainer}>
                   <Text style={styles.header}>Instructions</Text>
                   <Text style={styles.instructions}> 1. Enter Features: </Text>
-                  <Text style={styles.description}>Input the features you would like to include in your app one by one. You can either type the feature in the text input box or use the Speech-to-Text functionality to speak the desired features. {'\n'}</Text>
+                  <Text style={styles.description}>&#8226; Input the features you would like to include in your app one by one.</Text>
+                  <Text style={styles.description}>&#8226; You can either type the feature in the text input box or use the Speech-to-Text functionality to speak the desired features. {'\n'}</Text>
                   <Text style={styles.instructions}> 2. Add/Remove Predictions: </Text>
-                  <Text style={styles.description}>Use the “Add Feature” button or the enter key to confirm the features you’ve entered. Your input will then pop up on the left side of the page while our app’s prediction of your desired feature will appear on the right. Our app will also give 2nd and 3rd guesses of your feature that you can switch out with the top prediction in the event that either of them are the real feature you desired. In the event that all three predictions are incorrect, you can click the “Remove” button next to the feature and try again with a modified prompt. You may also always start from fresh by clicking the “Restart” button, which will clear out your previous inputs. {'\n'}</Text>
-                  <Text style={styles.instructions}> 3. Download App </Text>
-                  <Text style={styles.description}>Click the “Confirm Selections” button to generate the app and then the “Generate {'&'} Download App” button (which only appears after the app generation is done) to download your app as a .zip file. Once the app is ready, you will have all of the necessary code in your downloads folder.{'\n'}</Text>
+                  <Text style={styles.description}>&#8226; Use the <Text style={styles.greenFeatureMini}> Add Feature </Text> button or the enter key to confirm the features you’ve entered. Your input will then pop up on under <Text style={{fontWeight:'bold', textDecorationLine: 'underline'}}>Your Inputs</Text> while our app’s prediction of your desired feature will appear under <Text style={{fontWeight:'bold', textDecorationLine: 'underline'}}>Predictions</Text>.</Text>
+                  <Text style={styles.description}>&#8226; Our app will also give 2nd and 3rd guesses of your feature that you can switch out with the top prediction in the event that either of them are the real feature you desired.</Text>
+                  <Text style={styles.description}>&#8226; In the event that all three predictions are incorrect, you can click the <Text style={styles.orangeFeatureMini}> Remove </Text> button next to the feature and try again with a modified prompt.</Text>
+                  <Text style={styles.description}>&#8226; You may also always start from fresh by clicking the <Text style={styles.orangeFeatureMini}> Restart </Text> button, which will clear out your previous inputs. {'\n'}</Text>
+                  <Text style={styles.instructions}> 3. Generate and Download App </Text>
+                  <Text style={styles.description}>&#8226; Click the <Text style={styles.greenFeatureMini}> Generate App </Text> button to generate the app</Text>
+                  <Text style={styles.description}>&#8226; Click the <Text style={styles.blueFeatureMini}> Download App </Text> button (which only appears after the app generation is done) to download your app as a .zip file.</Text>
+                  <Text style={styles.description}>&#8226; Once the app is ready, you will have all of the necessary code in your downloads folder.{'\n'}</Text>
                   <Text style={styles.instructions}> 4. Run App </Text>
-                  <Text style={styles.description}>To run locally, open the zip, click on the file “start-app-windows.bat” (for windows) or “start-app-mac.sh” (for Mac), and then press the "w" key when prompted. To host online, upload the downloaded code to a web service provider.</Text>
+                  <Text style={styles.description}>&#8226; To run locally, open the zip, click on the file <Text style={{fontStyle:'italic'}}>start-app-windows.bat</Text> (for windows) or <Text style={{fontStyle:'italic'}}>start-app-mac.sh</Text> (for Mac), and then press the <Text style={{fontStyle:'italic'}}>"w"</Text> key when prompted.</Text>
+                  <Text style={styles.description}>&#8226; To host online, upload the downloaded code to a web service provider.</Text>
                 </View>
                 <View style={styles.featureInputContainer}>
                     <Text style = {styles.recognizedTextStyle}>Speach to Text:</Text>
@@ -351,7 +358,7 @@ export default function Main() {
                           style = {styles.confirmButton} 
                           onPress={() => generateApp()}
                       >
-                        <Text style = {styles.textStyle}> Confirm Selections </Text>
+                        <Text style = {styles.textStyle}> Generate App </Text>
                       </TouchableOpacity>
                     </View>
                     
@@ -361,7 +368,7 @@ export default function Main() {
                                 style = {styles.generateButton} 
                                 onPress={() => Linking.openURL(url)}
                             >
-                              <Text style = {styles.textStyle}>GENERATE & DOWNLOAD APP</Text>
+                              <Text style = {styles.textStyle}> DOWNLOAD APP</Text>
                             </TouchableOpacity>
                           ) : (
                             <Text>Confirm Selections to Download App...</Text>
@@ -440,11 +447,12 @@ const styles = StyleSheet.create({
         color: "#000",
         marginLeft: 5,
         fontWeight: "600",
+        marginTop: 5,
     },
     description:{
         marginLeft: 25,
         marginRight: 25,
-        marginBottom: 10,
+        marginBottom: 5,
         marginTop: 5,
     },
     bullet: {
@@ -474,13 +482,13 @@ const styles = StyleSheet.create({
       alignItems: "center",
       height: 40,
       width: 200
-  },
+    },
     generateButton: {
       backgroundColor: "steelblue",
       borderRadius: 10,
       alignItems: "center",
       height: 40,
-      marginTop: 10,
+      marginTop: 11,
     },
     textStyle:
     {
@@ -595,7 +603,7 @@ const styles = StyleSheet.create({
     
       recognizedTextStyle: {
         color: '#333333',
-        fontSize: 16,
+        fontSize: 18,
         marginLeft:20,
         marginBottom: 10,
         marginTop: 10,
@@ -603,7 +611,7 @@ const styles = StyleSheet.create({
       },
       regularTextStyle: {
         color: '#333333',
-        fontSize: 16,
+        fontSize: 18,
         marginLeft:20,
         marginBottom: 10,
         marginTop: 30,
@@ -649,7 +657,31 @@ const styles = StyleSheet.create({
       textDecorationLine: 'underline',
       marginBottom: 15,
       marginTop: 5,
-    }
+    },
+    orangeFeatureMini: {
+      backgroundColor: "coral",
+      borderWidth:1,
+      borderRadius: 5,
+      fontWeight:'bold',
+      color: 'white',
+      fontSize: 12,
+    },
+    greenFeatureMini: {
+      backgroundColor: "darkgreen",
+      borderWidth:1,
+      borderRadius: 5,
+      fontWeight:'bold',
+      color: 'white',
+      fontSize: 12,
+    },
+    blueFeatureMini: {
+      backgroundColor: "steelblue",
+      borderWidth:1,
+      borderRadius: 5,
+      fontWeight:'bold',
+      color: 'white',
+      fontSize: 12,
+    },
 });
 
 
