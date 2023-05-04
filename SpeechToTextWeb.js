@@ -7,6 +7,7 @@ const pulsatingCircleStyle = {
     backgroundColor: '#1e90ff',
     borderRadius: '50%',
     animation: 'pulse 2s infinite',
+    marginLeft: 25,
   };
   
   const pulseAnimation = `
@@ -93,7 +94,7 @@ export default function SpeechToTextWeb( {onTranscriptChange}) {
 
 return (
     <div>
-      <button onClick={startListening}>Start Listening</button>
+      <button style={{marginLeft:20,}} onClick={startListening}>Start Listening</button>
       <button onClick={stopListening}>Stop Listening</button>
       <button onClick={clear}>Clear</button>
       {isListening && <div style={pulsatingCircleStyle}></div>}

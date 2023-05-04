@@ -59,14 +59,13 @@ export default function Main() {
       "File_Upload": "fileUpload",
       "Careers": "careers",
       "Map": "map",
-      //"Menu": "",
+      "Menu": "menu",
       "Shopping": "products",
-      "People": "people",
       "Photo_Booth": "photoBooth",
       "Privacy": "privacy",
       "QR": "qr",
       "Reviews": "reviews",
-      //"Store Hours": "hours",
+      "Store Hours": "hours",
     };
   
     
@@ -215,15 +214,22 @@ export default function Main() {
             <View style = {styles.contentContainer}>
               <View syle={styles.chooseFeaturesContainer}>
                 <View style={styles.instructionsContainer}>
-                  <Text style={styles.instructions}> 1. Enter what features you would like to be in your app below {'\n'} </Text>
-                  <Text style={styles.instructions}> 2. Confirm your entries to get the available features {'\n'} </Text>
-                  <Text style={styles.instructions}> 3. Generate your app {'\n'} </Text>
-                  <Text style={styles.instructions}> 4. Download your app in a .zip </Text>
+                  <Text style={styles.header}>Instructions</Text>
+                  <Text style={styles.instructions}> 1. Enter Features: </Text>
+                  <Text style={styles.description}>Input the features you would like to include in your app one by one. You can either type the feature in the text input box or use the Speech-to-Text functionality to speak the desired features. {'\n'}</Text>
+                  <Text style={styles.instructions}> 2. Add/Remove Predictions: </Text>
+                  <Text style={styles.description}>Use the “Add Feature” button or the enter key to confirm the features you’ve entered. Your input will then pop up on the left side of the page while our app’s prediction of your desired feature will appear on the right. Our app will also give 2nd and 3rd guesses of your feature that you can switch out with the top prediction in the event that either of them are the real feature you desired. In the event that all three predictions are incorrect, you can click the “Remove” button next to the feature and try again with a modified prompt. You may also always start from fresh by clicking the “Restart” button, which will clear out your previous inputs. {'\n'}</Text>
+                  <Text style={styles.instructions}> 3. Download App </Text>
+                  <Text style={styles.description}>Click the “Confirm Selections” button to generate the app and then the “Generate {'&'} Download App” button (which only appears after the app generation is done) to download your app as a .zip file. Once the app is ready, you will have all of the necessary code in your downloads folder.{'\n'}</Text>
+                  <Text style={styles.instructions}> 4. Run App </Text>
+                  <Text style={styles.description}>To run locally, open the zip, click on the file “start-app-windows.bat” (for windows) or “start-app-mac.sh” (for Mac), and then press the "w" key when prompted. To host online, upload the downloaded code to a web service provider.</Text>
                 </View>
-
-                    <Text style = {styles.recognizedTextStyle}> {'\n'} Text to Speech Input here: {'\n'} </Text>
+                <View style={styles.featureInputContainer}>
+                    <Text style = {styles.recognizedTextStyle}>Speach to Text:</Text>
                     <SpeechToTextWeb onTranscriptChange={handleTranscriptChange} />
-                    <Text> Transcript: {transcript} </Text>
+                    <Text style = {styles.transcript}>Transcript: {transcript} </Text>
+
+                    <Text style = {styles.regularTextStyle}>Regular: </Text>
                     <TextInput
                       style = {styles.enter}
                       placeholder ="Enter a feature here ... "
@@ -242,53 +248,46 @@ export default function Main() {
                           <Text style = {styles.textStyle}>    Restart    </Text>
                       </TouchableOpacity>
                     </View>
-
-                    <FlatList
-                        data = {selectedFeatures}
-                        renderItem={({ item }) => (
-                          <View style={styles.bullet}>
-                            <Text style={
-                              { fontSize: 18,
-                                color: "#000",
-                                marginLeft: 15,
-                                fontWeight: "600",
-                              } 
-                          }>&#8226; {item}</Text>
-                          </View>
-                        )}
-                        keyExtractor={(item, index) => index.toString()}
-                    />
-                    
-                    <View style = {styles.confirmSelectionsButton}>
-                      <TouchableOpacity 
-                          style = {styles.confirmButton} 
-                          onPress={() => generateApp()}
-                      >
-                        <Text style = {styles.textStyle}> Confirm Selections </Text>
-                      </TouchableOpacity>
-                    </View>
-
                 </View>
+            </View>
+            
+            <View style={styles.textInputs}>
+              <Text style={styles.inputs}>Your Inputs</Text>
+              <FlatList
+                      data = {selectedFeatures}
+                      renderItem={({ item }) => (
+                        <View style={styles.bullet}>
+                          <Text style={
+                            { fontSize: 18,
+                              color: "#000",
+                              marginLeft: 15,
+                              fontWeight: "600",
+                              marginBottom: 10,
+                              marginTop: 0,
+                            } 
+                        }>{1 + selectedFeatures.indexOf(item)}) {item}</Text>
+                        </View>
+                      )}
+                      keyExtractor={(item, index) => index.toString()}
+                  /> 
+            </View>
+            <View style={styles.predictions}>
+              <Text style={styles.pred}>Predictions</Text>
                 {isLoading ? (
-                <View style={{ alignSelf: 'center', paddingLeft:200}}>
+                <View style={{ alignSelf: 'center'}}>
                     <Lottie
                       animationData={require('./assets/98432-loading.json')}
                       autoPlay
                       loop
-                      style={{width: '75%', height: '75%'}}
+                      style={{}}
                     />
                   </View>
                   ):(
                 <View style ={styles.nlpPredictionsContainer}>      
-                    <Text> Here are the features we think you have requested.
-                             {"\n"} If any don't seem right, you can add more or remove any
-                             {"\n"} using the +/- buttons.          
-                    </Text>
-                    
                   <FlatList
                     data={nextBest}
                     renderItem={({ item, index }) => (
-                      <View style={styles.bullet}>
+                      <View style={styles.mainBullet}>
                         <Text
                           style={{
                             fontSize: 18,
@@ -297,7 +296,7 @@ export default function Main() {
                             fontWeight: "600",
                           }}
                         >
-                          &#8226; {item.prediction} {"  "}
+                          {(index+1).toString()}) {item.prediction} {"  "}
                           <TouchableOpacity style={{backgroundColor: "coral",
                                                     borderRadius: 8,
                                                     paddingLeft: 15,
@@ -343,7 +342,16 @@ export default function Main() {
                     keyExtractor={(item, index) => index.toString()}
                   />
 
-                      
+
+                    <View style = {styles.confirmSelectionsButton}>
+                      <TouchableOpacity 
+                          style = {styles.confirmButton} 
+                          onPress={() => generateApp()}
+                      >
+                        <Text style = {styles.textStyle}> Confirm Selections </Text>
+                      </TouchableOpacity>
+                    </View>
+                    
                       <View style = {styles.generateDownloadAppContainer}>
                         {url ? (
                             <TouchableOpacity 
@@ -358,8 +366,9 @@ export default function Main() {
                       </View>  
                 </View>
                   )}
-              <View style = {styles.displaySelectionContainer}>
-              </View>
+            </View>
+            <View style = {styles.displaySelectionContainer}>
+            </View>
             </View>
         </View>
         
@@ -406,18 +415,40 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignContent: "center",
     flexDirection: "column",
-    width: 740,
+    width: 685,
     marginTop: 10,
     marginHorizontal: 5,
-},
+    borderWidth: 1,
+    borderRadius: 20,
+    backgroundColor: `#fff5ee`,
+  },
+    header:{
+        fontSize: 18,
+        color: "#000",
+        marginLeft: 10,
+        fontWeight: "600",
+        textDecorationLine: 'underline',
+        marginBottom: 5,
+        marginTop: 5,
+    },
     instructions:{
         fontSize: 18,
         color: "#000",
         marginLeft: 5,
         fontWeight: "600",
     },
+    description:{
+        marginLeft: 25,
+        marginRight: 25,
+        marginBottom: 10,
+        marginTop: 5,
+    },
     bullet: {
-        paddingTop: 25
+        paddingTop: 10
+    },
+    mainBullet:{
+        paddingTop: 0,
+        marginBottom: 20
     },
     confirmButton: {
         backgroundColor: "darkgreen",
@@ -428,12 +459,14 @@ const styles = StyleSheet.create({
     removeFeatureButton: {
       backgroundColor: "coral",
       borderRadius: 10,
+      marginBottom: 10,
       alignItems: "center",
       height: 40
     },
     addFeatureButton: {
       backgroundColor: "darkgreen",
       borderRadius: 10,
+      marginBottom: 10,
       alignItems: "center",
       height: 40,
       width: 200
@@ -442,7 +475,8 @@ const styles = StyleSheet.create({
       backgroundColor: "steelblue",
       borderRadius: 10,
       alignItems: "center",
-      height: 40
+      height: 40,
+      marginTop: 10,
     },
     textStyle:
     {
@@ -457,10 +491,10 @@ const styles = StyleSheet.create({
     },
     confirmSelectionsButton: {
       alignSelf: 'center',
-      justifyContent: 'center',
-      bottom: "3%",
-      width: '50%',
-      height: '10%',
+      justifyContent: 'flex-end',
+      //bottom: "3%",
+      width: 325,
+      height: 40,
     },
     container: {
         flex: 1,
@@ -475,9 +509,17 @@ const styles = StyleSheet.create({
         width: "100%"
       },
       contentContainer: {
-        flex: 1,
+        //flex: 1,
         flexDirection: "row"
       },
+    featureInputContainer: {
+      borderWidth: 1,
+      marginHorizontal: 5,
+      marginTop: 10,
+      borderRadius: 20,
+      width: 685,
+      backgroundColor: `#fff5ee`
+    },
     chooseFeaturesContainer: {
       // flex: 1,
       // backgroundColor: "#fff",
@@ -507,29 +549,31 @@ const styles = StyleSheet.create({
       alignSelf:"flex-start",
       flexDirection: "row"
     },
-
     enter:{
       textAlign: 'flex-end',
       fontSize:'25',
       paddingLeft: 15,
       marginBottom: 10,
-      marginTop:50,
+      marginTop:10,
+      marginLeft:25,
+      marginRight:25,
       borderBottomWidth: 1,
       borderBottomColor: 'black',
-      width: "100%"},
+    },
+
     nlpPredictionsContainer:{
-      alignItems: 'center',
-        justifyContent: 'flex-start',
-        alignSelf:'stretch',
-        paddingLeft: "25%",
+      //alignItems: 'center',
+        //justifyContent: 'flex-start',
+        //alignSelf:'stretch',
+        //paddingLeft: "25%",
     },
       generateDownloadAppContainer: {
 
         //alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        //justifyContent: 'flex-end',
         // paddingLeft: "25%",
-        paddingBottom: 50
+        //paddingBottom: 50
       },
       speechToTextButton: {
         backgroundColor: 'skyblue', // Choose your desired color
@@ -548,8 +592,60 @@ const styles = StyleSheet.create({
       recognizedTextStyle: {
         color: '#333333',
         fontSize: 16,
+        marginLeft:20,
+        marginBottom: 10,
+        marginTop: 10,
+        textDecorationLine: 'underline',
       },
-    
+      regularTextStyle: {
+        color: '#333333',
+        fontSize: 16,
+        marginLeft:20,
+        marginBottom: 10,
+        marginTop: 30,
+        textDecorationLine: 'underline',
+      },
+      transcript: {
+        marginLeft:25,
+        marginTop:2,
+        marginBotton: 30,
+        fontWeight: 'bold'
+      },
+    predictions: {
+      width:'35%', 
+      borderWidth:1, 
+      borderRadius:20, 
+      marginLeft:5,
+      marginTop:10,
+      backgroundColor: `#fff5ee`,
+    },
+    textInputs: {
+      width:'25%', 
+      borderWidth:1, 
+      borderRadius:20, 
+      marginLeft:5,
+      marginRight:5,
+      marginTop:10,
+      backgroundColor: `#fff5ee`,
+    },
+    inputs: {
+      fontSize: 18,
+      color: "#000",
+      marginLeft: 10,
+      fontWeight: "600",
+      textDecorationLine: 'underline',
+      marginBottom: 5,
+      marginTop: 5,
+    },
+    pred: {
+      fontSize: 18,
+      color: "#000",
+      marginLeft: 10,
+      fontWeight: "600",
+      textDecorationLine: 'underline',
+      marginBottom: 15,
+      marginTop: 5,
+    }
 });
 
 
