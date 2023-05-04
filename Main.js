@@ -34,38 +34,38 @@ export default function Main() {
       "Privacy Policy": "Privacy",
       "QR Code Scanner": "QR",
       "Reviews": "Reviews",
+      "Store Hours": "Hours",
       "Weather": "Weather",
-      "FAQ Page": "FAQs"
     };
 
     const nlpFeatures = ["About Page", "Activity Feed", "Application Page", "Calculator", "Calendar", "Chatbot",
                          "Contact Form", "Discussion Forum", "FAQ Page", "File Upload", "Google Sign-in", "Job Openings", 
                          "Map", "Menu", "Online Store", "People Page", "Photobooth", "Privacy Policy", "QR Code Scanner", 
-                         "Reviews", "Weather"];
+                         "Reviews", "Store Hours", "Weather"];
 
     const boolMappings = {
-      "Google_Login": "googleLogin",
-      "Weather": "weather",
-      "Calendar": "calendar",
-      "People": "people",
-      "FAQs": "faq",
       "About": "about",
-      "Activity Feed": "activityFeed",
+      "Activity": "activityFeed",
       "Apply": "apply",
       "Calculator": "calculator",
+      "Calendar": "calendar",
+      "Chat": "chat",
       "Chatbot": "chatbot",
       "Contact": "contact",
-      "Discussion Forum": "chat",
+      "FAQs": "faq",
       "File_Upload": "fileUpload",
       "Careers": "careers",
+      "Google_Login": "googleLogin",
+      "Hours": "hours",
       "Map": "map",
       "Menu": "menu",
       "Shopping": "products",
+      "People": "people",
       "Photo_Booth": "photoBooth",
       "Privacy": "privacy",
       "QR": "qr",
       "Reviews": "reviews",
-      "Store Hours": "hours",
+      "Weather": "weather",
     };
   
     
@@ -139,13 +139,13 @@ export default function Main() {
       setNextBest(temp1);
       //swap within master feature list
       const temp2 = [...translatedRequests];
-      // console.log(index);
-      // console.log(featureToSwap);
+      //console.log(index);
+      //console.log(featureToSwap);
       // console.log("temp2")
-      // console.log(temp2);
+      //console.log(temp2);
       temp2[index] = featureToSwap;
       // console.log("new temp2");
-      // console.log(temp2);
+      //console.log(temp2);
       setTranslatedRequests([...temp2]);
       //console.log(translatedRequests);
 
