@@ -103,8 +103,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   toppart:{
-    height: "500",
-    width: "100%",
     paddingTop:29,
     backgroundColor:'steelblue',
     alignItems: "center",

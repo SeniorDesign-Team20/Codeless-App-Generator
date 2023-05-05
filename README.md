@@ -1,6 +1,11 @@
 # Codeless App Generator
 
 The Codeless App Generator is a web application that allows users to easily create and download their own React Native web application, without writing any code of course. Users can enter requests for new features using plain English, and the app sends an API call to a customized NLP model based on the Cohere API. The NLP model classifies the user's request and returns the classification, as well as the two next highest confidence possibilities. The app then gathers the necessary files from a Firebase storage cluster based on the requested features, zips them, and allows the user to download the zip file of the generated app. To install and run the app, the user needs to extract the files and run a batch script that will automatically install node, npm, and the necessary node modules for the app. Once this is done, the user can run the app by pressing the `w` key, and the generated app will load in their browser after a few seconds.
+
+
+![Team](assets/logo1.png)
+
+
 ## Block Diagram of Component Relationships
 ![Block Diagram](assets/Block%20Diagram.png)
 

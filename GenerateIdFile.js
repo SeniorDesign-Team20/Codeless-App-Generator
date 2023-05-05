@@ -26,7 +26,7 @@ async function generateIdFile(setStatus) {
 
     // The name of the JSON file to be modified
     const fileDirectory = 'DefaultAppID/app_identifier.js';  
-    const fileName = 'GeneratedApp1/layout/app_identifier.js'
+    const fileName = 'GeneratedApp/layout/app_identifier.js'
 
     const defaultFileRef = ref(storage,fileDirectory);
     const updatedFileRef = ref(storage,fileName);
